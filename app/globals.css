@@ -85,6 +85,13 @@ body {
   animation: fadeInBg 2s;
 }
 
+.circle {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: #D9D9D9;
+}
+
 .button {
   width: 249px;
   height: 42px;
