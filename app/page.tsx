@@ -9,7 +9,7 @@ export default function HomeContainer({ children }: { children: any }) {
       >
         <div
           className="rectangle"
-          style={{ position: "absolute", top: "-260px", left: "-120px" }}
+          style={{ position: "absolute", top: "-260px", left: "-180px" }}
         />
         <div className="flex items-center justify-center h-[80vh]">
           <div

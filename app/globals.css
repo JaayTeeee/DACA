@@ -63,7 +63,7 @@ body {
   height: 390px;
   background: #426bfd;
   opacity: 0.6;
-  transform: rotate(333deg);
+  transform: rotate(325deg);
   animation: fadeInBg 2s;
 }
 
@@ -90,6 +90,7 @@ body {
   height: 42px;
   border-radius: 8px;
   background: #2641a5;
+  opacity: 0.8;
 }
 body {
   font-family: "Noto Sans", sans-serif;
@@ -107,5 +108,18 @@ body {
   }
   to {
     opacity: 1;
+  }
+}
+
+.error-message {
+  font-family: "NovaMono";
+  font-weight: normal;
+  color: #df0e0e;
+  animation: fadeOut 5s;
+}
+
+@layer utilities {
+  .text-shadow {
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   }
 }
