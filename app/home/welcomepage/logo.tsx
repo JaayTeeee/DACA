@@ -57,6 +57,6 @@ export default function LogoContainer({ children }: { children: any }) {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
