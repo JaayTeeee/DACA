@@ -1,4 +1,3 @@
-/** @type {import('next').NextConfig} */
 const nextConfig = {
   webpack: (config) => {
     config.externals.push({
@@ -6,6 +5,15 @@ const nextConfig = {
       bufferutil: "commonjs bufferutil",
     });
     return config;
+  },
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/home",
+        permanent: true,
+      },
+    ];
   },
 };
 
