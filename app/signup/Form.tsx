@@ -1,53 +1,90 @@
 "use client";
 import { redirect } from "next/navigation";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Text } from "../../public/styles/chakra";
 
+interface UserData {
+  username: string;
+  gender: string;
+  age: number;
+}
+
 const InputForm = () => {
-  const [name, setName] = useState("");
-  const [gender, setGender] = useState("");
-  const [age, setAge] = useState(0);
+  const [userData, setUserData] = useState<UserData>({
+    username: '',
+    gender: '',
+    age: 0,
+  });
+
   const [showGender, setShowGender] = useState(false);
   const [showAge, setShowAge] = useState(false);
   const [redirectTo, setRedirectTo] = useState("");
   const [isLoading, setLoading] = useState(false);
 
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
+  const setUsername = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newName = event.target.value;
+    setUserData((prevUserData) => ({
+      ...prevUserData,
+      username: newName,
+    }));
   };
 
-  const handleGenderChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setGender(event.target.value);
+  const setGender = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const newGender = event.target.value;
+    setUserData((prevUserData) => ({
+      ...prevUserData,
+      gender: newGender,
+    }));
   };
 
-  const handleAgeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const ageValue = parseInt(event.target.value);
-    setAge(isNaN(ageValue) ? 0 : ageValue);
+  const setAge = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newAge = parseInt(event.target.value);
+    setUserData((prevUserData) => ({
+      ...prevUserData,
+      age: newAge,
+    }));
   };
 
-  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!showGender) {
       setShowGender(true);
     } else {
-      if (age === 0) {
+      if (userData.age === 0) {
         setShowAge(true);
       } else {
         setLoading(true);
         try {
-          // await pass data to database
-          setLoading(false);
-          setRedirectTo("/welcome");
+          const newUserdata: UserData = {
+            username: userData.username,
+            gender: userData.gender,
+            age: userData.age,
+          };
+
+          const response = await fetch('signup/database', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newUserdata),
+          });
+
+          if (response.ok) {
+            setLoading(false);
+            setRedirectTo("/welcome");
+          } else {
+            console.error('Failed to save data');
+          }
         } catch (error) {
-          console.error("Failed to save data:", error);
+          console.error('Failed to save data:', error);
         }
       }
     }
   };
 
   if (redirectTo) {
-    redirect("/welcome");
+    redirect('/welcome');
   }
 
   return (
@@ -87,8 +124,8 @@ const InputForm = () => {
                     marginTop: "10px",
                     marginBottom: "10px",
                   }}
-                  value={name}
-                  onChange={handleNameChange}
+                  value={userData.username}
+                  onChange={setUsername}
                   placeholder="Your Name"
                   required
                 />
@@ -146,8 +183,8 @@ const InputForm = () => {
                   textIndent: "10px",
                   marginTop: "10px",
                 }}
-                value={gender}
-                onChange={handleGenderChange}
+                value={userData.gender}
+                onChange={setGender}
                 required
               >
                 <option value="">Select Gender</option>
@@ -209,8 +246,8 @@ const InputForm = () => {
                   textIndent: "10px",
                   marginTop: "10px",
                 }}
-                value={age}
-                onChange={handleAgeChange}
+                value={userData.age}
+                onChange={setAge}
                 placeholder="Your Age"
                 min={1}
                 required
