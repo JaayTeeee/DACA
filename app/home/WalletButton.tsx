@@ -26,14 +26,19 @@ export const WalletButton = () => {
       await ssx.signIn();
       setSSX(ssx);
       setLoading(false);
-      setRedirectTo("/signup");
-    } catch (error) {
-      console.error("Sign-in failed:", error);
-      setErrorMessage("Failed to sign in. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+       //这里await check if address在database:  wallet----->ssx.userAuthorization.address()
+       console.log(ssx.userAuthorization.address());
+       //如果wallet address 在database:
+       //setRedirectTo("/welcome");
+       //else:
+       setRedirectTo("/signup");
+     } catch (error) {
+       console.error("Sign-in failed:", error);
+       setErrorMessage("Failed to sign in. Please try again.");
+     } finally {
+       setLoading(false);
+     }
+   };
 
   if (redirectTo) {
     redirect("/signup");
