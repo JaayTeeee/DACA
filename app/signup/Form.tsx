@@ -2,7 +2,6 @@
 import { redirect } from "next/navigation";
 import React, { useState } from "react";
 import { Text } from "../../public/styles/chakra";
-const axios = require('axios');
 
 interface UserData {
   username: string;
@@ -78,7 +77,7 @@ const InputForm = () => {
             throw new Error(`Failed to fetch: ${res.statusText}`);
           }
           const response = await res.json();
-          
+
           if (response.success) {
             setLoading(false);
             setRedirectTo("/welcome");
