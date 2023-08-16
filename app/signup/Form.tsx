@@ -11,8 +11,8 @@ interface UserData {
 
 const InputForm = () => {
   const [userData, setUserData] = useState<UserData>({
-    username: "",
-    gender: "",
+    username: '',
+    gender: '',
     age: 0,
   });
 
@@ -62,12 +62,10 @@ const InputForm = () => {
             age: userData.age,
           };
 
-          console.log(JSON.stringify(newUserdata));
-
-          const response = await fetch("/signup/database", {
-            method: "POST",
+          const response = await fetch('signup/database', {
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify(newUserdata),
           });
@@ -76,18 +74,17 @@ const InputForm = () => {
             setLoading(false);
             setRedirectTo("/welcome");
           } else {
-            const errorData = await response.json();
-            console.error("Failed to save data:", errorData.error);
+            console.error('Failed to save data');
           }
         } catch (error) {
-          console.error("Failed to save data:", error);
+          console.error('Failed to save data:', error);
         }
       }
     }
   };
 
   if (redirectTo) {
-    redirect("/welcome");
+    redirect('/welcome');
   }
 
   return (
