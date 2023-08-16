@@ -1,6 +1,7 @@
 "use client";
 
-import { Button, Text } from "@chakra-ui/react";
+import { RectangleButton } from "@/public/component/RectangleButton";
+import { Text } from "@chakra-ui/react";
 import { SSX } from "@spruceid/ssx";
 import { redirect } from "next/navigation";
 import { useState } from "react";
@@ -53,15 +54,7 @@ export const WalletButton = () => {
           {errorMessage && (
             <Text className="error-message">{errorMessage}</Text>
           )}
-          <Button
-            className="button mt-4 fade-in"
-            style={{ transition: "ease-in" }}
-            onClick={ssxHandler}
-          >
-            <Text color="white" fontFamily="Noto Sans" fontWeight="bold">
-              Sign in With Ethereum
-            </Text>
-          </Button>
+          <RectangleButton onClick={ssxHandler} text="Sign in With Ethereum" />
         </>
       )}
     </>
