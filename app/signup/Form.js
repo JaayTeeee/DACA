@@ -51,6 +51,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var navigation_1 = require("next/navigation");
 var react_1 = require("react");
 var chakra_1 = require("../../public/styles/chakra");
+var axios = require('axios');
 var InputForm = function () {
     var _a = (0, react_1.useState)({
         username: '',
@@ -74,50 +75,59 @@ var InputForm = function () {
         setUserData(function (prevUserData) { return (__assign(__assign({}, prevUserData), { age: newAge })); });
     };
     var handleFormSubmit = function (event) { return __awaiter(void 0, void 0, void 0, function () {
-        var newUserdata, response, error_1;
+        var newUserdata, request, res, response, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     event.preventDefault();
                     if (!!showGender) return [3 /*break*/, 1];
                     setShowGender(true);
-                    return [3 /*break*/, 6];
+                    return [3 /*break*/, 7];
                 case 1:
                     if (!(userData.age === 0)) return [3 /*break*/, 2];
                     setShowAge(true);
-                    return [3 /*break*/, 6];
+                    return [3 /*break*/, 7];
                 case 2:
                     setLoading(true);
                     _a.label = 3;
                 case 3:
-                    _a.trys.push([3, 5, , 6]);
+                    _a.trys.push([3, 6, , 7]);
                     newUserdata = {
                         username: userData.username,
                         gender: userData.gender,
                         age: userData.age,
                     };
-                    return [4 /*yield*/, fetch('signup/database', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify(newUserdata),
-                        })];
+                    request = new Request('http://localhost:3001/api/insert', {
+                        method: 'POST',
+                        headers: new Headers({
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                        }),
+                        mode: 'cors',
+                        body: JSON.stringify(newUserdata)
+                    });
+                    return [4 /*yield*/, fetch(request)];
                 case 4:
+                    res = _a.sent();
+                    if (!res.ok) {
+                        throw new Error("Failed to fetch: ".concat(res.statusText));
+                    }
+                    return [4 /*yield*/, res.json()];
+                case 5:
                     response = _a.sent();
-                    if (response.ok) {
+                    if (response.success) {
                         setLoading(false);
                         setRedirectTo("/welcome");
                     }
                     else {
                         console.error('Failed to save data');
                     }
-                    return [3 /*break*/, 6];
-                case 5:
+                    return [3 /*break*/, 7];
+                case 6:
                     error_1 = _a.sent();
                     console.error('Failed to save data:', error_1);
-                    return [3 /*break*/, 6];
-                case 6: return [2 /*return*/];
+                    return [3 /*break*/, 7];
+                case 7: return [2 /*return*/];
             }
         });
     }); };

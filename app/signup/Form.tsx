@@ -45,7 +45,7 @@ const InputForm = () => {
     }));
   };
 
-  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
 
     if (!showGender) {
@@ -56,21 +56,29 @@ const InputForm = () => {
       } else {
         setLoading(true);
         try {
-          const newUserdata: UserData = {
+          const newUserdata = {
             username: userData.username,
             gender: userData.gender,
             age: userData.age,
           };
 
-          const response = await fetch('signup/database', {
+          const request = new Request('http://localhost:3001/api/insert', {
             method: 'POST',
-            headers: {
+            headers: new Headers({
               'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(newUserdata),
+              'Accept': 'application/json',
+            }),
+            mode: 'cors', // Set CORS mode to 'cors'
+            body: JSON.stringify(newUserdata)
           });
 
-          if (response.ok) {
+          const res = await fetch(request);
+          if (!res.ok) {
+            throw new Error(`Failed to fetch: ${res.statusText}`);
+          }
+          const response = await res.json();
+
+          if (response.success) {
             setLoading(false);
             setRedirectTo("/welcome");
           } else {
