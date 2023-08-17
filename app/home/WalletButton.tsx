@@ -31,7 +31,7 @@ export const WalletButton = () => {
        //如果wallet address 在database:
        //setRedirectTo("/welcome");
        //else:
-        const checkRequest = new Request('http://localhost:3001/api/insert1', {
+        /*const checkRequest = new Request('http://localhost:3001/api/check?id=${ssx.userAuthorization.address()}', {
         method: 'GET',
         headers: new Headers({
           'Content-Type': 'application/json',
@@ -43,10 +43,10 @@ export const WalletButton = () => {
       const checkResponse = await fetch(checkRequest);
       const checkData = await checkResponse.json();
 
-      if(checkData.success){
+      if(checkResponse.ok && checkData.success){
           redirect("/welcome");
-      } else {
-        const insertRequest = new Request('http://localhost:3001/api/insert1', {
+      } else {*/
+        const insertRequest = new Request('http://localhost:3001/api/insertid', {
           method: 'POST',
           headers: new Headers({
             'Content-Type': 'application/json',
@@ -66,7 +66,8 @@ export const WalletButton = () => {
           setRedirectTo("/signup");
         }
     }
-     } catch (error) {
+    // }
+      catch (error) {
        console.error("Sign-in failed:", error);
        setErrorMessage("Failed to sign in. Please try again.");
      } finally {
