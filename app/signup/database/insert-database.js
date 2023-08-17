@@ -17,11 +17,12 @@ const db = new Database('../../signup/database/database.db');
 
 global.id = null;
 
-app.post('/api/insert1', (req, res) => {
+app.post('/api/insertid', (req, res) => {
   global.id = req.body;
+  const idValue = id['id'];
 
   try{
-    console.log('Received id:', global.id);
+    console.log('Received address:', idValue);
     res.status(200).json({ success: true });
 } catch (error) {
   console.error('Error inserting address:', error);
@@ -32,11 +33,13 @@ app.post('/api/insert1', (req, res) => {
 // Define API endpoint for inserting data
 app.post('/api/insert', (req, res) => {
   const { username, gender, age } = req.body;
+  const idValue = global.id['id'];
 
   try {
     db.exec(`
       CREATE TABLE IF NOT EXISTS userData (
         userid INTEGER PRIMARY KEY,
+        address TEXT  UNIQUE,
         username TEXT,
         gender TEXT,
         age INTEGER,
@@ -45,15 +48,15 @@ app.post('/api/insert', (req, res) => {
     `);
 
     console.log('Data inserted successfully:', {
-        userid: global.id,
+        address: idValue,
         username: username,
         gender: gender,
         age: age,
       });
     
-
-    const insertStmt = db.prepare('INSERT INTO userData (userid, username, gender, age, chatPreference) VALUES (?, ?, ?, ?, ?)');
-    insertStmt.run(global.id, username, gender, age, '');
+      const insertStmt = db.prepare('INSERT INTO userData (address, username, gender, age, chatPreference) VALUES (?, ?, ?, ?, ?)');
+      insertStmt.run(idValue, username, gender, age, 'english');
+      
 
     res.status(200).json({ success: true });
   } catch (error) {
@@ -62,18 +65,18 @@ app.post('/api/insert', (req, res) => {
   }
 });
 
-app.get('/api/insert1', (req, res) => {
-  const { id } = req.query; // Use req.query to access query parameters
+app.get('/api/check', (req, res) => {
+  const { address } = req.query; // Use req.query to access query parameters
 
   try {
-    const checkStmt = db.prepare('SELECT * FROM userData WHERE userid = ?');
-    const result = checkStmt.get(id);
+    const checkStmt = db.prepare('SELECT * FROM userData WHERE address = ?');
+    const result = checkStmt.get(address);
 
     if (result) {
-      console.log('User exists with id:', id);
+      console.log('User exists with address:', address);
       res.status(200).json({ success: true });
     } else {
-      console.log('User not found with id:', id);
+      console.log('User not found with address:', address);
       res.status(404).json({ success: false, message: 'User not found' });
     }
   } catch (error) {
