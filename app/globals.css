@@ -85,6 +85,12 @@ body {
   animation: fadeInBg 2s;
 }
 
+.body_font {
+  font-family: "Noto Sans";
+  font-weight: normal;
+  color: black;
+}
+
 .box {
   width: 92%;
   height: 570px;

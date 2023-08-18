@@ -13,7 +13,17 @@ export default function profilePage() {
     return(
         <ProfileContainer>
             <div className="relative">
-                <div className="relative justify center" >
+                <div className="relative justify-center align-items-center" style={{marginLeft:'10px', marginBottom:'5px'}}>
+                    
+          <div
+            className="greyContainer"
+            style={{
+              position: "relative",
+              top:"-200px",
+              left: "520px",
+              zIndex: "-1",
+            }}
+          >      
                 <img
                     src={UserIconSrc}
                     alt="user-icon"
@@ -28,15 +38,42 @@ export default function profilePage() {
                     className="daca-font"
                     fontSize="85px"
                     style={{
-                        marginTop: "-80px",
+                        marginTop: "-100px",
                         marginLeft: "55px",
                     }}
                 >
                     PROFILE
                     </Text>
                 </div>
+                </div>
+
+
+
+                <div>
+                    <Text
+                    className="body_font"
+                    fontSize="40px"
+                    style={{
+                        marginTop: "60px",
+                        marginLeft: "40px",
+                    }}
+                >
+                    Username: 
+                    </Text>
+                    <Text
+                    className="body_font"
+                    fontSize="40px"
+                    style={{
+                        marginTop: "60px",
+                        marginLeft: "40px",
+                    }}
+                >
+                    Age:
+                    Gender:
+                    Chat Language Preference:
+                </Text>
             </div>
-            
+        </div>
         </ProfileContainer>
     )
 }
