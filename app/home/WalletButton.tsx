@@ -25,7 +25,6 @@ export const WalletButton = () => {
     });
 
     try {
-      const address = ssx.userAuthorization.address();
       await ssx.signIn();
       setSSX(ssx);
       setLoading(false);
@@ -34,13 +33,14 @@ export const WalletButton = () => {
        //如果wallet address 在database:
        //setRedirectTo("/welcome");
        //else:
-        const checkRequest = new Request('http://localhost:3001/api/check?address', {
-        method: 'GET',
+        const checkRequest = new Request('http://localhost:3001/api/check', {
+        method: 'POST',
         headers: new Headers({
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         }),
         mode: 'cors', // Set CORS mode to 'cors'
+        body: JSON.stringify({ id: ssx.userAuthorization.address() }),
       });
 
       const checkResponse = await fetch(checkRequest);

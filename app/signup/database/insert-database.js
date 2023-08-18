@@ -65,8 +65,9 @@ app.post('/api/insert', (req, res) => {
   }
 });
 
-app.get('/api/check', (req, res) => {
-  const { address } = req.query; // Use req.query to access query parameters
+app.post('/api/check', (req, res) => {
+  global.id = req.body;
+  const address = id['id'];
 
   try {
     const checkStmt = db.prepare('SELECT * FROM userData WHERE address = ?');
