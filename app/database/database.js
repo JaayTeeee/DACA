@@ -13,7 +13,7 @@ app.use(cors({
     methods: ['GET', 'POST'], // Add the methods you need
   }));
 
-const db = new Database('../../signup/database/database.db');
+const db = new Database('../database/database.db');
 
 global.id = null;
 
