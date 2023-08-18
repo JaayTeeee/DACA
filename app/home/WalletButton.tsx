@@ -9,7 +9,8 @@ import { useState } from "react";
 export const WalletButton = () => {
   const [ssxProvider, setSSX] = useState<SSX | null>(null);
   const [isLoading, setLoading] = useState(false);
-  const [redirectTo, setRedirectTo] = useState("");
+  const [redirectToSignUp, setRedirectToSignUp] = useState("");
+  const [redirectToWelcome, setRedirectToWelcome] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const ssxHandler = async () => {
@@ -32,22 +33,23 @@ export const WalletButton = () => {
        //如果wallet address 在database:
        //setRedirectTo("/welcome");
        //else:
-        const checkRequest = new Request('http://localhost:3001/api/insert1', {
-        method: 'GET',
+        const checkRequest = new Request('http://localhost:3001/api/check', {
+        method: 'POST',
         headers: new Headers({
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         }),
         mode: 'cors', // Set CORS mode to 'cors'
+        body: JSON.stringify({ id: ssx.userAuthorization.address() }),
       });
 
       const checkResponse = await fetch(checkRequest);
       const checkData = await checkResponse.json();
 
-      if(checkData.success){
-          redirect("/welcome");
+      if(checkResponse.ok && checkData.success){
+        setRedirectToWelcome("/welcome");
       } else {
-        const insertRequest = new Request('http://localhost:3001/api/insert1', {
+        const insertRequest = new Request('http://localhost:3001/api/insertid', {
           method: 'POST',
           headers: new Headers({
             'Content-Type': 'application/json',
@@ -60,15 +62,13 @@ export const WalletButton = () => {
         const insertResponse = await fetch(insertRequest);
     
         if (insertResponse.ok) {
-          // Insert successful, redirect to welcome page
-          redirect("/welcome");
+          setRedirectToSignUp("/signup");
         } else {
           console.error('Failed to insert address:', insertResponse);
-          setRedirectTo("/signup");
         }
-
+      }
     }
-     } catch (error) {
+      catch (error) {
        console.error("Sign-in failed:", error);
        setErrorMessage("Failed to sign in. Please try again.");
      } finally {
@@ -76,9 +76,12 @@ export const WalletButton = () => {
      }
    };
 
-  if (redirectTo) {
-    redirect("/signup");
+   if (redirectToWelcome) {
+    redirect(redirectToWelcome);
+  } else if (redirectToSignUp) {
+    redirect(redirectToSignUp);
   }
+
   return (
     <>
       {isLoading ? (
