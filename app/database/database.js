@@ -77,8 +77,8 @@ app.post('/api/check', (req, res) => {
       console.log('User exists with address:', address);
       res.status(200).json({ success: true });
     } else {
-      console.log('User not found with address:', address);
-      res.status(404).json({ success: false, message: 'User not found' });
+        console.log('User not found with address:', address);
+        res.status(200).json({ success: false, message: 'User not found' });
     }
   } catch (error) {
     console.error('Error checking data:', error);
@@ -86,6 +86,26 @@ app.post('/api/check', (req, res) => {
   }
 });
 
+app.post('/api/checkUsername', (req, res) => {
+  global.id = req.body;
+  const address = id['id'];
+
+  try {
+    const checkStmt = db.prepare('SELECT username FROM userData WHERE address = ?');
+    const result = checkStmt.get(address);
+
+    if (result) {
+      console.log('User exists with address (welcome page):', result);
+      res.status(200).json({ success: true });
+    } else {
+      console.log('User not found with address (welcome page):', result);
+      res.status(404).json({ success: false, message: 'User not found' });
+    }
+  } catch (error) {
+    console.error('Error checking data:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 // Start the server
 app.listen(PORT, () => {

@@ -1,9 +1,11 @@
 import { CircleButton } from "@/public/component/CircleButton";
 import HelpIcon from "@/public/component/icons/icons8-help-50.png";
 import UserIcon from "@/public/component/icons/icons8-user-50.png";
+import LogoutIcon from "@/public/component/icons/icons8-log-out-50.png";
 import { Text } from "@/public/styles/chakra";
-import "../../globals.css";
+import "../globals.css";
 import LogoContainer from "./logo";
+import CheckUsername from "./functions";
 export default function welcomePage() {
   return (
     <LogoContainer>
@@ -24,9 +26,10 @@ export default function welcomePage() {
             Decentralized | Anonymity | Desctructive
           </Text>
         </div>
-        <div className="flex mt-5" style={{ marginLeft: "1150px" }}>
+        <div className="flex mt-5" style={{ marginLeft: "1050px" }}>
           <CircleButton imgSrc={HelpIcon} desc="help-icon" />
           <CircleButton imgSrc={UserIcon} desc="user-icon" />
+          <CircleButton imgSrc={LogoutIcon} desc="logout-icon" imgStyle={{width: "60%", height: "60%"}}/>
         </div>
       </div>
 
@@ -39,11 +42,12 @@ export default function welcomePage() {
             marginLeft: "50px",
             marginTop: "50px",
           }}
-          fontSize="75px"
+          fontSize="80px"
         >
           WELCOME BACK,
         </Text>
       </div>
+      <CheckUsername />
     </LogoContainer>
   );
 }
