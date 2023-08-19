@@ -1,28 +1,26 @@
 "use client";
 import { useEffect, useState } from "react";
-import ScrollToBottom from "react-scroll-to-bottom";
+import socketIOClient from "socket.io-client";
 import "../../globals.css";
-
 import ChatInterface from "./ChatInterface";
+
 interface Message {
   room: number;
   author: string;
   message: string;
   time: string;
 }
-const socket = require("../../database/database");
 
 const ChatProgram = ({
-  socket,
   username,
   room,
 }: {
-  socket: any;
   username: string;
   room: number;
 }) => {
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState<Message[]>([]);
+  const socket = socketIOClient("http://localhost:4000");
 
   const sendMessage = async () => {
     if (currentMessage !== "") {
@@ -52,7 +50,7 @@ const ChatProgram = ({
     <ChatInterface>
       <div>
         <div className="chat-body">
-          <ScrollToBottom className="message-container">
+          {/* <ScrollToBottom className="message-container">
             {messageList.map((messageContent) => {
               return (
                 <div
@@ -71,7 +69,7 @@ const ChatProgram = ({
                 </div>
               );
             })}
-          </ScrollToBottom>
+          </ScrollToBottom> */}
         </div>
       </div>
     </ChatInterface>

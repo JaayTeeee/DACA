@@ -1,14 +1,11 @@
 const express = require("express");
 const cors = require("cors"); // Import the cors module
 const Database = require("better-sqlite3");
-const http = require("http");
-const socketIo = require('socket.io');
+
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const server = http.createServer(app);
-const io = socketIo(server);
-exports.module = io;
+
 // Middleware to parse JSON requests
 app.use(express.json());
 
@@ -119,13 +116,4 @@ app.post("/api/checkUsername", (req, res) => {
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
-});
-
-io.on("connection", (socket) => {
-  console.log(`User connected: ${socket.id}`);
-
-  socket.on("send_message", (data) => {
-    console.log(data);
-    socket.emit("receive_message", data);
-  });
 });
