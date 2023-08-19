@@ -1,6 +1,6 @@
 "use client";
 
-import "../../globals.css";
+import "../globals.css";
 export default function LogoContainer({ children }: { children: any }) {
   return (
     <div
@@ -19,7 +19,7 @@ export default function LogoContainer({ children }: { children: any }) {
             className="rectangle2"
             style={{
               position: "absolute",
-              bottom: "-1000px",
+              bottom: "-670px",
               left: "-780px",
             }}
           />
@@ -27,7 +27,7 @@ export default function LogoContainer({ children }: { children: any }) {
             className="rectangle3"
             style={{
               position: "absolute",
-              bottom: "-1090px",
+              bottom: "-790px",
               left: "-890px",
             }}
           />

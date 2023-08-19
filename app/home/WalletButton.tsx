@@ -28,55 +28,57 @@ export const WalletButton = () => {
       await ssx.signIn();
       setSSX(ssx);
       setLoading(false);
-       //这里await check if address在database:  wallet----->ssx.userAuthorization.address()
-       console.log(ssx.userAuthorization.address());
-       //如果wallet address 在database:
-       //setRedirectTo("/welcome");
-       //else:
-        const checkRequest = new Request('http://localhost:3001/api/check', {
-        method: 'POST',
+      //这里await check if address在database:  wallet----->ssx.userAuthorization.address()
+      console.log(ssx.userAuthorization.address());
+      //如果wallet address 在database:
+      //setRedirectTo("/welcome");
+      //else:
+      const checkRequest = new Request("http://localhost:3001/api/check", {
+        method: "POST",
         headers: new Headers({
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
+          "Content-Type": "application/json",
+          Accept: "application/json",
         }),
-        mode: 'cors', // Set CORS mode to 'cors'
+        mode: "cors", // Set CORS mode to 'cors'
         body: JSON.stringify({ id: ssx.userAuthorization.address() }),
       });
 
       const checkResponse = await fetch(checkRequest);
       const checkData = await checkResponse.json();
 
-      if(checkResponse.ok && checkData.success){
+      if (checkResponse.ok && checkData.success) {
         setRedirectToWelcome("/welcome");
       } else {
-        const insertRequest = new Request('http://localhost:3001/api/insertid', {
-          method: 'POST',
-          headers: new Headers({
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          }),
-          mode: 'cors', // Set CORS mode to 'cors'
-          body: JSON.stringify({ id: ssx.userAuthorization.address() }),
-        });
-    
+        const insertRequest = new Request(
+          "http://localhost:3001/api/insertid",
+          {
+            method: "POST",
+            headers: new Headers({
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            }),
+            mode: "cors", // Set CORS mode to 'cors'
+            body: JSON.stringify({ id: ssx.userAuthorization.address() }),
+          }
+        );
+
         const insertResponse = await fetch(insertRequest);
-    
+
         if (insertResponse.ok) {
           setRedirectToSignUp("/signup");
         } else {
-          console.error('Failed to insert address:', insertResponse);
+          console.error("Failed to insert address:", insertResponse);
         }
       }
+    } catch (error) {
+      console.error("Sign-in failed:", error);
+      setErrorMessage("Failed to sign in. Please try again.");
+    } finally {
+      setLoading(false);
     }
-      catch (error) {
-       console.error("Sign-in failed:", error);
-       setErrorMessage("Failed to sign in. Please try again.");
-     } finally {
-       setLoading(false);
-     }
-   };
+  };
 
-   if (redirectToWelcome) {
+  if (redirectToWelcome) {
     redirect(redirectToWelcome);
   } else if (redirectToSignUp) {
     redirect(redirectToSignUp);
