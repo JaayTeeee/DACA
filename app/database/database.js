@@ -1,14 +1,10 @@
 const express = require("express");
 const cors = require("cors"); // Import the cors module
 const Database = require("better-sqlite3");
-const http = require("http");
-const socketIO = require("socket.io");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const server = http.createServer(app);
-const io = socketIO(server);
-exports.module = io;
+
 // Middleware to parse JSON requests
 app.use(express.json());
 
@@ -85,6 +81,29 @@ app.post("/api/check", (req, res) => {
       res.status(200).json({ success: true });
     } else {
       console.log("User not found with address:", address);
+      res.status(200).json({ success: false, message: "User not found" });
+    }
+  } catch (error) {
+    console.error("Error checking data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.post("/api/checkUsername", (req, res) => {
+  global.id = req.body;
+  const address = id["id"];
+
+  try {
+    const checkStmt = db.prepare(
+      "SELECT username FROM userData WHERE address = ?"
+    );
+    const result = checkStmt.get(address);
+
+    if (result) {
+      console.log("User exists with address (welcome page):", result);
+      res.status(200).json({ success: true });
+    } else {
+      console.log("User not found with address (welcome page):", result);
       res.status(404).json({ success: false, message: "User not found" });
     }
   } catch (error) {
@@ -93,16 +112,7 @@ app.post("/api/check", (req, res) => {
   }
 });
 
-io.on("connection", (socket) => {
-  console.log(`User connected: ${socket.id}`);
-
-  socket.on("send_message", (data) => {
-    console.log(data);
-    socket.emit("receive_message", data);
-  });
-});
-
 // Start the server
-server.listen((PORT = 3000), () => {
+app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

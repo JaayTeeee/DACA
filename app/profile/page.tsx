@@ -5,12 +5,15 @@ import EditIcon from "@/public/component/icons/icons8-edit-50.png";
 import UserIcon from "@/public/component/icons/icons8-user-100.png";
 import { Text } from "@/public/styles/chakra";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import "../globals.css";
 import ProfileContainer from "./profile";
 
 export default function profilePage() {
+  const router = useRouter();
+
   const handleCancel = () => {
-    console.log("Cancel button clicked");
+    router.push("/welcome");
   };
 
   const handleSave = () => {
@@ -25,6 +28,7 @@ export default function profilePage() {
             style={{
               position: "relative",
               marginLeft: "10px",
+              animation: "fadeIn 2s",
             }}
           >
             <Image
@@ -40,14 +44,21 @@ export default function profilePage() {
             <Text
               className="daca-font"
               fontSize="85px"
-              style={{ marginBottom: "25px", marginLeft: "10px" }}
+              style={{
+                marginBottom: "25px",
+                marginLeft: "10px",
+                animation: "none",
+              }}
             >
               PROFILE
             </Text>
           </div>
         </div>
 
-        <div className="flex flex-col justify-start mt-[3rem] ml-[20rem]">
+        <div
+          className="flex flex-col justify-start mt-[3rem] ml-[20rem]"
+          style={{ animation: "fadeIn 2s" }}
+        >
           <div className="flex flex-row mt-3">
             <Image
               src={EditIcon}
