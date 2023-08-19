@@ -2,6 +2,7 @@ import { Text } from "@/public/styles/chakra";
 import "../globals.css";
 import { RedirectToChatButton, TopThreeButtons } from "./WelcomePageButton";
 import LogoContainer from "./logo";
+import CheckUsername from "./functions";
 
 export default function welcomePage() {
   return (
@@ -31,11 +32,11 @@ export default function welcomePage() {
 
         <div className="flex flex-col" style={{ marginLeft: "50px" }}>
           <Text
-            className="daca-font"
+            className="daca-font flex-row"
             style={{ marginTop: "70px" }}
             fontSize="75px"
           >
-            WELCOME BACK,
+            WELCOME BACK, {<CheckUsername />}
           </Text>
           <RedirectToChatButton />
         </div>

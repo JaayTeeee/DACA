@@ -2,12 +2,12 @@ const express = require("express");
 const cors = require("cors"); // Import the cors module
 const Database = require("better-sqlite3");
 const http = require("http");
-const socketIO = require("socket.io");
+const socketIo = require('socket.io');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 const server = http.createServer(app);
-const io = socketIO(server);
+const io = socketIo(server);
 exports.module = io;
 // Middleware to parse JSON requests
 app.use(express.json());
@@ -102,10 +102,10 @@ app.post("/api/checkUsername", (req, res) => {
       "SELECT username FROM userData WHERE address = ?"
     );
     const result = checkStmt.get(address);
-
+    
     if (result) {
       console.log("User exists with address (welcome page):", result);
-      res.status(200).json({ success: true });
+      res.status(200).json({ success: true, username: result.username });
     } else {
       console.log("User not found with address (welcome page):", result);
       res.status(404).json({ success: false, message: "User not found" });

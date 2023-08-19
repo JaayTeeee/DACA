@@ -1,12 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Text } from "@chakra-ui/react";
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 export default function CheckUsername() {
-  const router = useRouter();
-  const { address } = router.query;
-  const [checkData, setCheckData] = useState<{ success: boolean; address?: string } | null>(null);
+  const urlSearchParams = new URLSearchParams(window.location.search);
+
+  // Get specific query parameters
+  const address = urlSearchParams.get('address');
+  const [checkData, setCheckData] = useState<{ success: boolean; username?: string } | null>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -41,10 +43,10 @@ export default function CheckUsername() {
   }, [address]);
 
   return (
-    <div>
-      {checkData?.address && (
-        <Text className="daca-font">{checkData.address}</Text>
+    <>
+      {checkData?.username && (
+        <Text className="daca-font">{checkData.username.toUpperCase()}</Text>
       )}
-    </div>
+    </>
   );
 }
