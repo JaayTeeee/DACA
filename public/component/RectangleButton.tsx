@@ -4,8 +4,13 @@ interface ButtonProps {
   onClick?: any;
   text: string;
 }
-export const RectangleButton = (ButtonProps: { onClick: any; text: any }) => {
-  const { onClick, text } = ButtonProps;
+export const RectangleButton = (ButtonProps: {
+  onClick: any;
+  text: any;
+  buttonStyle?: any;
+  textStyle?: any;
+}) => {
+  const { onClick, text, buttonStyle, textStyle } = ButtonProps;
 
   return (
     <div className="mt-5">
@@ -13,8 +18,14 @@ export const RectangleButton = (ButtonProps: { onClick: any; text: any }) => {
         className="button fade-in"
         style={{ transition: "ease-in" }}
         onClick={onClick}
+        {...buttonStyle}
       >
-        <Text color="white" fontFamily="Noto Sans" fontWeight="bold">
+        <Text
+          color="white"
+          fontFamily="Noto Sans"
+          fontWeight="bold"
+          {...textStyle}
+        >
           {text}
         </Text>
       </Button>

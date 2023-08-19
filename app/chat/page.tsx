@@ -1,30 +1,17 @@
-import { Text } from "../../public/styles/chakra";
-import "../globals.css";
-import ChatButton from "./ChatButton";
-const Chat = () => {
+// import { useState } from "react";
+import ChatProgram from "./client/ChatProgram";
+
+const socket = require("../database/database");
+
+export const Chat = () => {
+  // const [username, setUsername] = useState("");
+  const room = 1;
+  socket.emit("join_room", room);
+  const username = "test";
+
   return (
     <>
-      <div
-        className="flex flex-col"
-        style={{ position: "relative", overflow: "hidden" }}
-      >
-        <div className="flex flex-col items-center justify-center mt-2">
-          <div
-            className="flex flex-row justify-center "
-            style={{ marginLeft: "700px" }}
-          >
-            <Text className="daca-font" fontSize="48px">
-              DACA
-            </Text>
-            <div className="mt-2" style={{ marginLeft: "600px" }}>
-              <ChatButton />
-            </div>
-          </div>
-          <div className="box mt-2" style={{ borderRadius: "10px" }}></div>
-        </div>
-      </div>
+      <ChatProgram socket={socket} username={username} room={room} />
     </>
   );
 };
-
-export default Chat;

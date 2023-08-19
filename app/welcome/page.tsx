@@ -1,12 +1,45 @@
-import { Text } from "../../public/styles/chakra";
-import HomeContainer from "../page";
+import { Text } from "@/public/styles/chakra";
+import "../globals.css";
+import { RedirectToChatButton, TopThreeButtons } from "./WelcomePageButton";
+import LogoContainer from "./logo";
 
-const Welcome = () => {
+export default function welcomePage() {
   return (
-    <HomeContainer>
-      <Text className="daca-font"> HI</Text>
-    </HomeContainer>
-  );
-};
+    <>
+      <LogoContainer>
+        <div className="flex flex-row">
+          <div className="flex-col">
+            <Text
+              className="daca-font ml-2"
+              style={{ marginTop: "-20px" }}
+              fontSize="90px"
+            >
+              DACA
+            </Text>
+            <Text
+              className="daca-font ml-3"
+              style={{ marginTop: "-30px" }}
+              fontSize="9px"
+            >
+              Decentralized | Anonymity | Desctructive
+            </Text>
+          </div>
+          <div className="flex mt-5" style={{ marginLeft: "1080px" }}>
+            <TopThreeButtons />
+          </div>
+        </div>
 
-export default Welcome;
+        <div className="flex flex-col" style={{ marginLeft: "50px" }}>
+          <Text
+            className="daca-font"
+            style={{ marginTop: "70px" }}
+            fontSize="75px"
+          >
+            WELCOME BACK,
+          </Text>
+          <RedirectToChatButton />
+        </div>
+      </LogoContainer>
+    </>
+  );
+}

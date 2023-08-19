@@ -4,14 +4,14 @@ import { CircleButton } from "@/public/component/CircleButton";
 import LogoutIcon from "@/public/component/icons/icons8-log-out-50.png";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import "../globals.css";
+import "../../globals.css";
 
-const ChatButton = () => {
+const RedirectToWelcomeButton = () => {
   const router = useRouter();
   const [redirectTo, setRedirectTo] = useState("");
 
   const handleClick = () => {
-    setRedirectTo("/home/welcomepage");
+    setRedirectTo("/welcome");
   };
 
   useEffect(() => {
@@ -33,4 +33,4 @@ const ChatButton = () => {
   );
 };
 
-export default ChatButton;
+export default RedirectToWelcomeButton;
