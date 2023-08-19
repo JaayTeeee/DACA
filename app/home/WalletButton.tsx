@@ -48,7 +48,7 @@ export const WalletButton = () => {
 
         if (checkData.success === true) {
           const encodedAddress = encodeURIComponent(address);
-          setRedirectToWelcome(`/welcomepage?address=${encodedAddress}`);
+          setRedirectToWelcome(`/welcome?address=${encodedAddress}`);
         } else {
           const insertRequest = new Request(
             "http://localhost:3001/api/insertid",

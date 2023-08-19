@@ -1,28 +1,27 @@
 "use client";
 import { useEffect, useState } from "react";
 import ScrollToBottom from "react-scroll-to-bottom";
+import socketIOClient from "socket.io-client";
 import "../../globals.css";
-
 import ChatInterface from "./ChatInterface";
+
 interface Message {
   room: number;
   author: string;
   message: string;
   time: string;
 }
-const socket = require("../../database/database");
 
 const ChatProgram = ({
-  socket,
   username,
   room,
 }: {
-  socket: any;
   username: string;
   room: number;
 }) => {
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState<Message[]>([]);
+  const socket = socketIOClient("http://localhost:3003");
 
   const sendMessage = async () => {
     if (currentMessage !== "") {
