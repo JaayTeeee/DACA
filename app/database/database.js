@@ -45,7 +45,7 @@ app.post("/api/insert", (req, res) => {
     db.exec(`
       CREATE TABLE IF NOT EXISTS userData (
         userid INTEGER PRIMARY KEY,
-        address TEXT  UNIQUE,
+        address TEXT UNIQUE,
         username TEXT,
         gender TEXT,
         age INTEGER,
@@ -72,17 +72,18 @@ app.post("/api/insert", (req, res) => {
   }
 });
 
+//home page
 app.post("/api/check", (req, res) => {
   global.id = req.body;
   const address = id["id"];
 
   try {
-    const checkStmt = db.prepare("SELECT * FROM userData WHERE address = ?");
+    const checkStmt = db.prepare("SELECT username FROM userData WHERE address = ?");
     const result = checkStmt.get(address);
 
     if (result) {
       console.log("User exists with address:", address);
-      res.status(200).json({ success: true });
+      res.status(200).json({ success: true , address: result.address });
     } else {
       console.log("User not found with address:", address);
       res.status(200).json({ success: false, message: "User not found" });
@@ -93,6 +94,7 @@ app.post("/api/check", (req, res) => {
   }
 });
 
+//welcome page
 app.post("/api/checkUsername", (req, res) => {
   global.id = req.body;
   const address = id["id"];
@@ -105,10 +107,35 @@ app.post("/api/checkUsername", (req, res) => {
 
     if (result) {
       console.log("User exists with address (welcome page):", result);
-      res.status(200).json({ success: true });
+      res.status(200).json({ success: true, username: result.username });
     } else {
       console.log("User not found with address (welcome page):", result);
       res.status(404).json({ success: false, message: "User not found" });
+    }
+  } catch (error) {
+    console.error("Error checking data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+//profile page
+app.post("/api/viewData", (req, res) => {
+  global.id = req.body;
+  const address = id["id"];
+
+  try {
+    const checkStmt = db.prepare(
+      "SELECT * FROM userData WHERE address = ?"
+    );
+    const result = checkStmt.get(address);
+
+    if (result) {
+      console.log("Data founded:", result);
+      res.status(200).json({ success: true, username: result.username, age: result.age, 
+        gender: result.gender, chatPreference: result.chatPreference });
+    } else {
+      console.log("Data cannot found:", result);
+      res.status(404).json({ success: false, message: "Data not found" });
     }
   } catch (error) {
     console.error("Error checking data:", error);

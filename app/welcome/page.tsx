@@ -2,6 +2,7 @@ import { Text } from "@/public/styles/chakra";
 import "../globals.css";
 import { RedirectToChatButton, TopThreeButtons } from "./WelcomePageButton";
 import LogoContainer from "./logo";
+import CheckUsername from "./GetUsername";
 
 export default function welcomePage() {
   return (
@@ -36,6 +37,7 @@ export default function welcomePage() {
             fontSize="75px"
           >
             WELCOME BACK,
+          <CheckUsername />
           </Text>
           <RedirectToChatButton />
         </div>

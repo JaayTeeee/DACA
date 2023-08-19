@@ -1,12 +1,11 @@
 "use client";
-
 import { CircleButton } from "@/public/component/CircleButton";
 import { RectangleButton } from "@/public/component/RectangleButton";
 import HelpIcon from "@/public/component/icons/icons8-help-50.png";
 import LogoutIcon from "@/public/component/icons/icons8-log-out-50.png";
 import UserIcon from "@/public/component/icons/icons8-user-50.png";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { SSX } from "@spruceid/ssx";
 
@@ -15,6 +14,13 @@ export const TopThreeButtons = () => {
   const [ssxProvider, setSSX] = useState<SSX | null>(null);
   const [redirectToProfile, setredirectToProfile] = useState("");
   const router = useRouter();
+  const [address, setAddress] = useState<string | null>(null);
+
+  useEffect(() => {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const addressFromQuery = urlSearchParams.get('address');
+    setAddress(addressFromQuery);
+  }, []);
 
   const ssxHandler = async () => {
     const ssx = new SSX({
@@ -39,7 +45,10 @@ export const TopThreeButtons = () => {
   };
 
   const handleProfileClick = () => {
-    router.push("/profile");
+    if (address !== null) {
+      const encodedAddress = encodeURIComponent(address);
+      router.push(`/profile?address=${encodedAddress}`);
+    }
   };
 
   return (

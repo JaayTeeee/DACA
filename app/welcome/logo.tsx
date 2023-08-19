@@ -19,7 +19,7 @@ export default function LogoContainer({ children }: { children: any }) {
             className="rectangle2"
             style={{
               position: "absolute",
-              bottom: "-670px",
+              bottom: "-630px",
               left: "-780px",
             }}
           />
@@ -27,7 +27,7 @@ export default function LogoContainer({ children }: { children: any }) {
             className="rectangle3"
             style={{
               position: "absolute",
-              bottom: "-790px",
+              bottom: "-730px",
               left: "-890px",
             }}
           />

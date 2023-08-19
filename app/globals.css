@@ -111,6 +111,14 @@ body {
   background: #d9d9d9;
 }
 
+.wordHolder{
+  width: 500px;
+  height: 55px;
+  border-radius: 15px;
+  background: #d9d9d9;
+  opacity: 0.8;
+}
+
 .button {
   width: 249px;
   height: 42px;
