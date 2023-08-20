@@ -1,9 +1,9 @@
 "use client";
 import { redirect } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { Text } from "../../public/styles/chakra";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 interface UserData {
   username: string;
@@ -13,8 +13,8 @@ interface UserData {
 
 const InputForm = () => {
   const [userData, setUserData] = useState<UserData>({
-    username: '',
-    gender: '',
+    username: "",
+    gender: "",
     age: 0,
   });
 
@@ -47,8 +47,10 @@ const InputForm = () => {
       age: newAge,
     }));
   };
-  
-  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
+
+  const handleFormSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     event.preventDefault();
 
     if (!showGender) {
@@ -65,41 +67,42 @@ const InputForm = () => {
             age: userData.age,
           };
 
-          const request = new Request('http://localhost:3001/api/insert', {
-            method: 'POST',
+          const request = new Request("http://localhost:3001/api/insert", {
+            method: "POST",
             headers: new Headers({
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
+              "Content-Type": "application/json",
+              Accept: "application/json",
             }),
-            mode: 'cors', // Set CORS mode to 'cors'
-            body: JSON.stringify(newUserdata)
+            mode: "cors", // Set CORS mode to 'cors'
+            body: JSON.stringify(newUserdata),
           });
 
           const res = await fetch(request);
+          console.log(res);
           if (!res.ok) {
             throw new Error(`Failed to fetch: ${res.statusText}`);
           }
           const response = await res.json();
 
           if (response.success) {
-              setLoading(false);
-              setRedirectTo('/home');   
-              toast.success('Registered Successfully!', {
-                position: toast.POSITION.TOP_CENTER,
-                autoClose: 3000,
-              });         
+            setLoading(false);
+            setRedirectTo("/home");
+            toast.success("Registered Successfully!", {
+              position: toast.POSITION.TOP_CENTER,
+              autoClose: 3000,
+            });
           } else {
-            console.error('Failed to save data');
+            console.error("Failed to save data");
           }
         } catch (error) {
-          console.error('Failed to save data:', error);
+          console.error("Failed to save data:", error);
         }
       }
     }
   };
 
   if (redirectTo) {
-    redirect('/home');
+    redirect("/home");
   }
 
   return (

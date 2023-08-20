@@ -5,11 +5,56 @@ import EditIcon from "@/public/component/icons/icons8-edit-50.png";
 import UserIcon from "@/public/component/icons/icons8-user-100.png";
 import { Text } from "@/public/styles/chakra";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import "../globals.css";
 import ProfileContainer from "./profile";
-import ViewData from "./ViewData";
 
 export default function profilePage() {
+  const [address, setAddress] = useState<string | null>(null);
+  const [checkData, setCheckData] = useState<{
+    success: boolean;
+    username?: string;
+    age?: number;
+    gender?: string;
+    chatPreference?: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const addressFromQuery = urlSearchParams.get("address");
+    setAddress(addressFromQuery);
+
+    async function fetchData() {
+      try {
+        const checkRequest = new Request("http://localhost:3001/api/viewData", {
+          method: "POST",
+          headers: new Headers({
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          }),
+          mode: "cors",
+          body: JSON.stringify({ id: addressFromQuery }),
+        });
+
+        const checkResponse = await fetch(checkRequest);
+        const checkData = await checkResponse.json();
+
+        if (checkResponse.ok && checkData.success) {
+          console.log(checkData);
+          setCheckData(checkData);
+        } else {
+          console.error("Failed to view user data:", checkResponse);
+        }
+      } catch (error) {
+        console.error("An error occurred:", error);
+      }
+    }
+
+    if (address) {
+      fetchData();
+    }
+  }, [address]);
+
   const handleCancel = () => {
     console.log("Cancel button clicked");
   };
@@ -53,83 +98,125 @@ export default function profilePage() {
         </div>
 
         <div className="flex flex-col justify-start mt-[3rem] ml-[20rem]">
-          <div className="flex flex-row mt-3">
-            <Image
-              src={EditIcon}
-              alt="user-icon"
-              style={{
-                width: "40px",
-                height: "40px",
-                marginRight: "25px",
-                marginTop: "3px",
-              }}
-            />
-            <Text style={{ fontSize: "30px" }}>Username</Text>
-            <div className="flex flex-row wordHolder"
-            style={{
-              position: "relative",
-              marginLeft: "250px",
-            }}
-            />
-          </div>
-          <div className="flex flex-row mt-3">
-            <Image
-              src={EditIcon}
-              alt="user-icon"
-              style={{
-                width: "40px",
-                height: "40px",
-                marginRight: "25px",
-                marginTop: "3px",
-              }}
-            />
-            <Text style={{ fontSize: "30px" }}>Age</Text>
-            <div className="flex flex-row wordHolder"
-            style={{
-              position: "relative",
-              marginLeft: "345px",
-            }}
-            />
-          </div>
-          <div className="flex flex-row mt-3">
-            <Image
-              src={EditIcon}
-              alt="user-icon"
-              style={{
-                width: "40px",
-                height: "40px",
-                marginRight: "25px",
-                marginTop: "3px",
-              }}
-            />
-            <Text style={{ fontSize: "30px" }}>Gender</Text>
-            <div className="flex flex-row wordHolder"
-            style={{
-              position: "relative",
-              marginLeft: "295px",
-            }}
-            />
-          </div>
-          <div className="flex flex-row mt-3">
-            <Image
-              src={EditIcon}
-              alt="user-icon"
-              style={{
-                width: "40px",
-                height: "40px",
-                marginRight: "25px",
-                marginTop: "3px",
-              }}
-            />
-            <Text style={{ fontSize: "30px" }}>Chat Language Preference</Text>
-            <div className="flex flex-row wordHolder"
-            style={{
-              position: "relative",
-              marginLeft: "25px",
-            }}
-            />
-          </div>
-        <ViewData />
+          {checkData?.username &&
+            checkData?.age &&
+            checkData?.gender &&
+            checkData?.chatPreference && (
+              <>
+                <div className="flex flex-row mt-3">
+                  <Image
+                    src={EditIcon}
+                    alt="user-icon"
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      marginRight: "25px",
+                      marginTop: "3px",
+                    }}
+                  />
+                  <Text style={{ fontSize: "30px" }}>Username</Text>
+                  <div
+                    className="flex flex-row wordHolder"
+                    style={{
+                      position: "relative",
+                      marginLeft: "250px",
+                    }}
+                  >
+                    <Text
+                      className="body_font"
+                      style={{ margin: "auto", textAlign: "center" }}
+                    >
+                      {checkData.username}
+                    </Text>
+                  </div>
+                </div>
+                <div className="flex flex-row mt-3">
+                  <Image
+                    src={EditIcon}
+                    alt="user-icon"
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      marginRight: "25px",
+                      marginTop: "3px",
+                    }}
+                  />
+                  <Text style={{ fontSize: "30px" }}>Age</Text>
+                  <div className="flex flex-col">
+                    <div
+                      className="flex flex-row wordHolder"
+                      style={{
+                        position: "relative",
+                        marginLeft: "345px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text className="body_font">{checkData.age}</Text>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-row mt-3">
+                  <Image
+                    src={EditIcon}
+                    alt="user-icon"
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      marginRight: "25px",
+                      marginTop: "3px",
+                    }}
+                  />
+                  <Text style={{ fontSize: "30px" }}>Gender</Text>
+                  <div className="flex flex-col">
+                    <div
+                      className="flex flex-row wordHolder"
+                      style={{
+                        position: "relative",
+                        marginLeft: "295px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text className="body_font">{checkData.gender}</Text>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-row mt-3">
+                  <Image
+                    src={EditIcon}
+                    alt="user-icon"
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      marginRight: "25px",
+                      marginTop: "3px",
+                    }}
+                  />
+                  <Text style={{ fontSize: "30px" }}>
+                    Chat Language Preference
+                  </Text>
+                  <div className="flex flex-col">
+                    <div
+                      className="flex flex-row wordHolder"
+                      style={{
+                        position: "relative",
+                        marginLeft: "25px",
+                      }}
+                    >
+                      <Text
+                        className="body_font"
+                        style={{ margin: "auto", textAlign: "center" }}
+                      >
+                        {checkData.chatPreference}
+                      </Text>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
         </div>
 
         <div className="flex flex-row mt-[5rem] justify-center ">
@@ -147,7 +234,7 @@ export default function profilePage() {
             onClick={handleSave}
             text="Save"
             buttonStyle={{
-              color: 'red',
+              color: "red",
               marginLeft: "5rem",
               height: "60px",
               weight: "300px",

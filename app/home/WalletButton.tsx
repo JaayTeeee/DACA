@@ -85,10 +85,10 @@ export const WalletButton = () => {
     }
   };
 
-  if (redirectToWelcome) {
-    redirect(redirectToWelcome);
-  } else if (redirectToSignUp) {
+  if (redirectToSignUp) {
     redirect(redirectToSignUp);
+  } else if (redirectToWelcome) {
+    redirect(redirectToWelcome);
   }
 
   return (
