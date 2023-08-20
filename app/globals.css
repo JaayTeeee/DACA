@@ -87,8 +87,9 @@ body {
 
 .body_font {
   font-family: "Noto Sans";
-  font-weight: normal;
+  font-weight: bold;
   color: black;
+  text-align: "center";
 }
 
 .box {
@@ -111,7 +112,7 @@ body {
   background: #d9d9d9;
 }
 
-.wordHolder{
+.wordHolder {
   width: 500px;
   height: 55px;
   border-radius: 15px;

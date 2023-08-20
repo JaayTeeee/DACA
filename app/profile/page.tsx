@@ -5,6 +5,7 @@ import EditIcon from "@/public/component/icons/icons8-edit-50.png";
 import UserIcon from "@/public/component/icons/icons8-user-100.png";
 import { Text } from "@/public/styles/chakra";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import "../globals.css";
 import ProfileContainer from "./profile";
@@ -55,8 +56,10 @@ export default function profilePage() {
     }
   }, [address]);
 
-  const handleCancel = () => {
-    console.log("Cancel button clicked");
+  const router = useRouter();
+
+  const handleBack = () => {
+    router.push("/welcome");
   };
 
   const handleSave = () => {
@@ -119,7 +122,7 @@ export default function profilePage() {
                     className="flex flex-row wordHolder"
                     style={{
                       position: "relative",
-                      marginLeft: "250px",
+                      marginLeft: "255px",
                     }}
                   >
                     <Text
@@ -219,10 +222,10 @@ export default function profilePage() {
             )}
         </div>
 
-        <div className="flex flex-row mt-[5rem] justify-center ">
+        <div className="flex flex-row mt-[5rem] mb-[1rem] justify-center ">
           <RectangleButton
-            onClick={handleCancel}
-            text="Cancel"
+            onClick={handleBack}
+            text="Back"
             buttonStyle={{
               marginRight: "5rem",
               height: "60px",
@@ -235,7 +238,6 @@ export default function profilePage() {
             text="Save"
             buttonStyle={{
               color: "red",
-              marginLeft: "5rem",
               height: "60px",
               weight: "300px",
               shadow: "0px 4px 4px rgba(0, 0, 0, 0.55)",
