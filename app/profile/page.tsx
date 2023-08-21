@@ -27,12 +27,12 @@ export default function profilePage() {
 
     //UserData is fetched from the fields
     const [address, setAddress] = useState<string | null>(null);
-    const updatedUserdata = {
-      username: UserData.username,
-      gender: UserData.gender,
-      age: UserData.age,
-      chatPreference: UserData.chatPreference,
-    };
+    // const updatedUserdata = {
+    //   username: UserData.username,
+    //   gender: UserData.gender,
+    //   age: UserData.age,
+    //   chatPreference: UserData.chatPreference,
+    // };
   
     useEffect(() => {
       const urlSearchParams = new URLSearchParams(window.location.search);
@@ -48,7 +48,7 @@ export default function profilePage() {
               'Accept': 'application/json',
             }),
             mode: 'cors',
-            body: JSON.stringify(updatedUserdata),
+            // body: JSON.stringify(updatedUserdata),
           });
   
           const updateResponse = await fetch(updateRequest);
