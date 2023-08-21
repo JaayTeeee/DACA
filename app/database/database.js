@@ -53,17 +53,17 @@ app.post("/api/insert", (req, res) => {
       )
     `);
 
+    const insertStmt = db.prepare(
+      "INSERT INTO userData (address, username, gender, age, chatPreference) VALUES (?, ?, ?, ?, ?)"
+    );
+    insertStmt.run(idValue, username, gender, age, "english");
+
     console.log("Data inserted successfully:", {
       address: idValue,
       username: username,
       gender: gender,
       age: age,
     });
-
-    const insertStmt = db.prepare(
-      "INSERT INTO userData (address, username, gender, age, chatPreference) VALUES (?, ?, ?, ?, ?)"
-    );
-    insertStmt.run(idValue, username, gender, age, "english");
 
     res.status(200).json({ success: true });
   } catch (error) {
@@ -141,6 +141,71 @@ app.post("/api/viewData", (req, res) => {
     console.error("Error checking data:", error);
     res.status(500).json({ error: "Internal server error" });
   }
+});
+
+//welcome page
+app.post("/api/checkUsername", (req, res) => {
+  global.id = req.body;
+  const address = id["id"];
+
+  try {
+    const checkStmt = db.prepare(
+      "SELECT username FROM userData WHERE address = ?"
+    );
+    const result = checkStmt.get(address);
+
+    if (result) {
+      console.log("User exists with address (welcome page):", result);
+      res.status(200).json({ success: true, username: result.username });
+    } else {
+      console.log("User not found with address (welcome page):", result);
+      res.status(404).json({ success: false, message: "User not found" });
+    }
+  } catch (error) {
+    console.error("Error checking data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+//profile page - delete account
+app.post("/api/deleteAcc", (req, res) => {
+  global.id = req.body;
+  const address = id["id"];
+
+  try {
+    const checkStmt = db.prepare(
+      "DELETE FROM userData WHERE address = ?"
+    );
+    const result = checkStmt.get(address);
+
+    if (result) {
+      console.log("Delete successfully:", result);
+      res.status(200).json({ success: true });
+    } else {
+      console.log("Delete failed:", result);
+      res.status(404).json({ success: false, message: "User not found" });
+    }
+  } catch (error) {
+    console.error("Error checking data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+//profile page - update data
+app.post("/api/updateData", (req, res) => {
+  const { username, gender, age, chatPreference } = req.body;
+  const address = id["id"];
+
+  try {
+    const updateStmt = db.prepare("UPDATE userData SET username = ?, gender = ?, age = ?, chatPreference = ? WHERE address = ?");
+    updateStmt.run(username, gender, age, chatPreference, address);
+    
+      console.log("update successfully");
+      res.status(200).json({ success: true });
+    } catch (error) {
+      console.error("Error updating data:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
 });
 
 // Start the server
