@@ -27,6 +27,8 @@ export default function profilePage() {
     chatPreference?: string;
   } | null>(null);
 
+  const [updatedData, updateUserData] = useState<updatedUserData>();
+
   useEffect(() => {
     const urlSearchParams = new URLSearchParams(window.location.search);
     const addressFromQuery = urlSearchParams.get("address");
@@ -220,20 +222,30 @@ export default function profilePage() {
                     }}
                   />
                   <Text style={{ fontSize: "30px" }}>Username</Text>
-                  <div
-                    className="flex flex-row wordHolder"
+
+                  <form
+                    //onSubmit={handleFormSubmit}
                     style={{
                       position: "relative",
                       marginLeft: "255px",
                     }}
                   >
-                    <Text
-                      className="body_font"
-                      style={{ margin: "auto", textAlign: "center" }}
-                    >
-                      {checkData.username}
-                    </Text>
-                  </div>
+                    <input
+                      className="wordHolder"
+                      type="text"
+                      style={{
+                        outlineColor: "#EAEAEA",
+                        alignContent: "center",
+                        opacity: 0.9,
+                        textAlign: "center",
+                        marginRight: "200px",
+                      }}
+                      placeholder={checkData.username}
+                      // onChange={setUsername}
+                      value={updatedData?.username}
+                      required
+                    />
+                  </form>
                 </div>
                 <div className="flex flex-row mt-3">
                   <Image
@@ -248,18 +260,30 @@ export default function profilePage() {
                   />
                   <Text style={{ fontSize: "30px" }}>Age</Text>
                   <div className="flex flex-col">
-                    <div
-                      className="flex flex-row wordHolder"
+                    <form
+                      //onSubmit={handleFormSubmit}
                       style={{
                         position: "relative",
                         marginLeft: "345px",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
                       }}
                     >
-                      <Text className="body_font">{checkData.age}</Text>
-                    </div>
+                      <input
+                        className="wordHolder"
+                        type="number"
+                        style={{
+                          outlineColor: "#EAEAEA",
+                          alignContent: "center",
+                          opacity: 0.9,
+                          textAlign: "center",
+                          textIndent: "10px",
+                        }}
+                        placeholder={checkData.age.toString()}
+                        min={1}
+                        // onChange={setAge}
+                        value={updatedData?.age}
+                        required
+                      />
+                    </form>
                   </div>
                 </div>
                 <div className="flex flex-row mt-3">
@@ -275,8 +299,7 @@ export default function profilePage() {
                   />
                   <Text style={{ fontSize: "30px" }}>Gender</Text>
                   <div className="flex flex-col">
-                    <div
-                      className="flex flex-row wordHolder"
+                    <form
                       style={{
                         position: "relative",
                         marginLeft: "295px",
@@ -285,8 +308,29 @@ export default function profilePage() {
                         alignItems: "center",
                       }}
                     >
-                      <Text className="body_font">{checkData.gender}</Text>
-                    </div>
+                      <select
+                        className="wordHolder"
+                        style={{
+                          outlineColor: "#EAEAEA",
+                          textIndent: "10px",
+                          textAlign: "center",
+                          color: "rgba(0, 0, 0, 0.5)",
+                        }}
+                        // onChange={setGender}
+                        value={updatedData?.gender}
+                        required
+                      >
+                        <option value="" disabled selected hidden>
+                          {checkData.gender || "Select Gender"}
+                        </option>{" "}
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Non-binary">Non-Binary</option>
+                        <option value="Prefer-not-to-disclose">
+                          Prefer Not to Disclose
+                        </option>
+                      </select>
+                    </form>
                   </div>
                 </div>
                 <div className="flex flex-row mt-3">
@@ -304,20 +348,34 @@ export default function profilePage() {
                     Chat Language Preference
                   </Text>
                   <div className="flex flex-col">
-                    <div
-                      className="flex flex-row wordHolder"
+                    <form
                       style={{
                         position: "relative",
                         marginLeft: "25px",
                       }}
                     >
-                      <Text
-                        className="body_font"
-                        style={{ margin: "auto", textAlign: "center" }}
+                      <select
+                        className="wordHolder"
+                        style={{
+                          outlineColor: "#EAEAEA",
+                          textIndent: "10px",
+                          textAlign: "center",
+                          color: "rgba(0, 0, 0, 0.5)",
+                        }}
+                        // onChange={setChatPreference}
+                        value={updatedData?.chatPreference}
+                        required
                       >
-                        {checkData.chatPreference}
-                      </Text>
-                    </div>
+                        <option value="" disabled selected hidden>
+                          {checkData.chatPreference || "Select Chat Language"}
+                        </option>
+                        <option value="English">English (default)</option>
+                        <option value="Mandarin">Mandarin</option>
+                        <option value="Japanese">Japanese</option>
+                        <option value="Spanish">Spanish</option>
+                        <option value="Malay">Malay </option>
+                      </select>
+                    </form>
                   </div>
                 </div>
               </>

@@ -1,6 +1,7 @@
 "use client";
 import { Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import ScrollToBottom from "react-scroll-to-bottom";
 import socketIOClient from "socket.io-client";
 import "../../globals.css";
 import ChatInterface from "./ChatInterface";
@@ -51,7 +52,7 @@ const ChatProgram = ({
     <ChatInterface>
       <div>
         <div className="chat-body">
-          {/* <ScrollToBottom className="message-container">
+          <ScrollToBottom className="message-container">
             {messageList.map((messageContent) => {
               return (
                 <div
@@ -70,7 +71,7 @@ const ChatProgram = ({
                 </div>
               );
             })}
-          </ScrollToBottom> */}
+          </ScrollToBottom>
         </div>
         <div className="chat-footer flex flex-row justify-center">
           <input
