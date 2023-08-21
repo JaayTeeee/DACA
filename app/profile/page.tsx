@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import "../globals.css";
 import ProfileContainer from "./profile";
 
-interface udpatedUserData {
+interface updatedUserData {
   username: string;
   gender: string;
   age: number;
