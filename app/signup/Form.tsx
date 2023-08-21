@@ -1,9 +1,9 @@
+//direct to welcome page with params
 "use client";
 import { redirect } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Text } from "../../public/styles/chakra";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+
 
 interface UserData {
   username: string;
@@ -23,6 +23,12 @@ const InputForm = () => {
   const [redirectTo, setRedirectTo] = useState("");
   const [isLoading, setLoading] = useState(false);
   const [address, setAddress] = useState<string | null>(null);
+
+  useEffect(() => {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const addressFromQuery = urlSearchParams.get('address');
+    setAddress(addressFromQuery);
+  }, [address]);
 
   const setUsername = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newName = event.target.value;
@@ -82,12 +88,16 @@ const InputForm = () => {
           const response = await res.json();
 
           if (response.success) {
+            if (address !== null) {
+              const encodedAddress = encodeURIComponent(address);
+              console.log('Encoded Address:', encodedAddress);
               setLoading(false);
-              setRedirectTo('/home');   
-              toast.success('Registered Successfully!', {
-                position: toast.POSITION.TOP_CENTER,
-                autoClose: 3000,
-              });         
+              setRedirectTo(`/welcome?address=${encodedAddress}`);
+              console.log('Redirecting to:', redirectTo);
+            } else {
+              console.error('Address is null.');
+              // Handle the case when address is null
+            }
           } else {
             console.error('Failed to save data');
           }
@@ -99,7 +109,7 @@ const InputForm = () => {
   };
 
   if (redirectTo) {
-    redirect('/home');
+    redirect(redirectTo);
   }
 
   return (
