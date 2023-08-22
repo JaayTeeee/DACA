@@ -180,18 +180,12 @@ app.post("/api/deleteAcc", (req, res) => {
   const address = global.id["id"];
 
   try {
-    const checkStmt = db.prepare("DELETE FROM userData WHERE address = ?");
-    const result = checkStmt.get(address);
-
-    if (result) {
-      console.log("Delete successfully:", result);
-      res.status(200).json({ success: true });
-    } else {
-      console.log("Delete failed:", result);
-      res.status(404).json({ success: false, message: "User not found" });
-    }
+    const deleteStmt = db.prepare("DELETE FROM userData WHERE address = ?");
+    deleteStmt.run(address);
+    console.log("delete successfully");
+    res.status(200).json({ success: true });
   } catch (error) {
-    console.error("Error checking data:", error);
+    console.error("Error deleting data:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });

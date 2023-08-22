@@ -1,14 +1,12 @@
 "use client";
-
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { Text } from "@/public/styles/chakra";
+import ProfileContainer from "./profile";
 import { RectangleButton } from "@/public/component/RectangleButton";
 import EditIcon from "@/public/component/icons/icons8-edit-50.png";
 import UserIcon from "@/public/component/icons/icons8-user-100.png";
-import { Text } from "@/public/styles/chakra";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import "../globals.css";
-import ProfileContainer from "./profile";
 
 interface updatedUserData {
   username: string;
@@ -27,7 +25,12 @@ export default function profilePage() {
     chatPreference?: string;
   } | null>(null);
 
-  const [updatedData, updateUserData] = useState<updatedUserData>();
+  const [updatedData, updateUserData] = useState<updatedUserData>({
+    username: "",
+    gender: "",
+    age: checkData?.age || 0,
+    chatPreference: "",
+  });
 
   useEffect(() => {
     const urlSearchParams = new URLSearchParams(window.location.search);
@@ -65,114 +68,129 @@ export default function profilePage() {
     }
   }, [address]);
 
+  const setUsername = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newName = event.target.value;
+    updateUserData((prevUserData) => ({
+      ...prevUserData,
+      username: newName,
+    }));
+  };
+
+  const setGender = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const newGender = event.target.value;
+    updateUserData((prevUserData) => ({
+      ...prevUserData,
+      gender: newGender,
+    }));
+  };
+
+  const setAge = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newAge = parseInt(event.target.value);
+    updateUserData((prevUserData) => ({
+      ...prevUserData,
+      age: newAge,
+    }));
+  };
+
+  const setChatPreference = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const newChatLanguage = event.target.value;
+    updateUserData((prevUserData) => ({
+      ...prevUserData,
+      chatPreference: newChatLanguage,
+    }));
+  };
+
   const router = useRouter();
 
   const handleBack = () => {
-    router.push("/welcome");
+    if (address !== null) {
+      const encodedAddress = encodeURIComponent(address);
+      router.push(`/welcome?address=${encodedAddress}`);
+    }
   };
 
   const handleSave = () => {
-    console.log("Save button clicked");
+    const newUserData = {
+      username: updatedData.username || (checkData?.username || ""),
+      gender: updatedData.gender || (checkData?.gender || ""),
+      age: updatedData.age || (checkData?.age || 0),
+      chatPreference:
+        updatedData.chatPreference || (checkData?.chatPreference || ""),
+    };
 
-    //UserData is fetched from the fields
-    const [address, setAddress] = useState<string | null>(null);
-    // const updatedUserdata = {
-    //   username: UserData.username,
-    //   gender: UserData.gender,
-    //   age: UserData.age,
-    //   chatPreference: UserData.chatPreference,
-    // };
-
-    useEffect(() => {
-      const urlSearchParams = new URLSearchParams(window.location.search);
-      const addressFromQuery = urlSearchParams.get("address");
-      setAddress(addressFromQuery);
-
-      async function fetchData() {
-        try {
-          const updateRequest = new Request(
-            "http://localhost:3001/api/updateData",
-            {
-              method: "POST",
-              headers: new Headers({
-                "Content-Type": "application/json",
-                Accept: "application/json",
-              }),
-              mode: "cors",
-              // body: JSON.stringify(updatedUserdata),
-            }
-          );
-
-          const updateResponse = await fetch(updateRequest);
-          const updateData = await updateResponse.json();
-
-          if (updateResponse.ok && updateData.success) {
-            console.log(updateData);
-          } else {
-            console.error("Failed to update user data", updateRequest);
+    async function updateData() {
+      try {
+        const updateRequest = new Request(
+          "http://localhost:3001/api/updateData",
+          {
+            method: "POST",
+            headers: new Headers({
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            }),
+            mode: "cors",
+            body: JSON.stringify(newUserData),
           }
-        } catch (error) {
-          console.error("An error occurred:", error);
-        }
-      }
+        );
 
-      if (address) {
-        fetchData();
+        const updateResponse = await fetch(updateRequest);
+        const updateData = await updateResponse.json();
+
+        if (updateResponse.ok && updateData.success) {
+          console.log(updateData);
+        } else {
+          console.error("Failed to update user data", updateRequest);
+        }
+      } catch (error) {
+        console.error("An error occurred:", error);
       }
-    }, [address]);
+    }
+
+    if (
+      updatedData?.age !== checkData?.age ||
+      updatedData?.username !== checkData?.username ||
+      updatedData?.gender !== checkData?.gender ||
+      updatedData?.chatPreference !== checkData?.chatPreference
+    ) {
+      updateData();
+    }
   };
 
   const handleDelete = () => {
-    console.log("Delete button clicked");
-
-    const [address, setAddress] = useState<string | null>(null);
-    const [checkData, setCheckData] = useState<{
-      success: boolean;
-      username?: string;
-      age?: number;
-      gender?: string;
-      chatPreference?: string;
-    } | null>(null);
-
-    useEffect(() => {
-      const urlSearchParams = new URLSearchParams(window.location.search);
-      const addressFromQuery = urlSearchParams.get("address");
-      setAddress(addressFromQuery);
-
-      async function fetchData() {
-        try {
-          const deleteRequest = new Request(
-            "http://localhost:3001/api/deleteAcc",
-            {
-              method: "POST",
-              headers: new Headers({
-                "Content-Type": "application/json",
-                Accept: "application/json",
-              }),
-              mode: "cors",
-              body: JSON.stringify({ id: addressFromQuery }),
-            }
-          );
-
-          const deleteResponse = await fetch(deleteRequest);
-          const checkData = await deleteResponse.json();
-
-          if (deleteResponse.ok && checkData.success) {
-            console.log(checkData);
-            setCheckData(checkData);
-          } else {
-            console.error("Failed to delete account", deleteResponse);
+    async function deleteData() {
+      try {
+        const deleteRequest = new Request(
+          "http://localhost:3001/api/deleteAcc",
+          {
+            method: "POST",
+            headers: new Headers({
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            }),
+            mode: "cors",
+            body: JSON.stringify({ id: address }),
           }
-        } catch (error) {
-          console.error("An error occurred:", error);
-        }
-      }
+        );
 
-      if (address) {
-        fetchData();
+        const deleteResponse = await fetch(deleteRequest);
+        const deleteData = await deleteResponse.json();
+
+        if (deleteResponse.ok && deleteData.success) {
+          console.log(deleteData);
+        } else {
+          console.error("Failed to delete account", deleteResponse);
+        }
+      } catch (error) {
+        console.error("An error occurred:", error);
       }
-    }, [address]);
+      router.push("/home");
+    }
+
+    if (address) {
+      deleteData();
+    }
   };
+
   return (
     <ProfileContainer>
       <div className="flex flex-col">
@@ -224,7 +242,6 @@ export default function profilePage() {
                   <Text style={{ fontSize: "30px" }}>Username</Text>
 
                   <form
-                    //onSubmit={handleFormSubmit}
                     style={{
                       position: "relative",
                       marginLeft: "255px",
@@ -240,8 +257,8 @@ export default function profilePage() {
                         textAlign: "center",
                         marginRight: "200px",
                       }}
-                      placeholder={checkData.username}
-                      // onChange={setUsername}
+                      placeholder={checkData.username || ''}
+                      onChange={setUsername}
                       value={updatedData?.username}
                       required
                     />
@@ -261,7 +278,6 @@ export default function profilePage() {
                   <Text style={{ fontSize: "30px" }}>Age</Text>
                   <div className="flex flex-col">
                     <form
-                      //onSubmit={handleFormSubmit}
                       style={{
                         position: "relative",
                         marginLeft: "345px",
@@ -277,9 +293,9 @@ export default function profilePage() {
                           textAlign: "center",
                           textIndent: "10px",
                         }}
-                        placeholder={checkData.age.toString()}
+                        placeholder={checkData.age.toString() || ''}
                         min={1}
-                        // onChange={setAge}
+                        onChange={setAge}
                         value={updatedData?.age}
                         required
                       />
@@ -316,7 +332,7 @@ export default function profilePage() {
                           textAlign: "center",
                           color: "rgba(0, 0, 0, 0.5)",
                         }}
-                        // onChange={setGender}
+                        onChange={setGender}
                         value={updatedData?.gender}
                         required
                       >
@@ -362,7 +378,7 @@ export default function profilePage() {
                           textAlign: "center",
                           color: "rgba(0, 0, 0, 0.5)",
                         }}
-                        // onChange={setChatPreference}
+                        onChange={setChatPreference}
                         value={updatedData?.chatPreference}
                         required
                       >
