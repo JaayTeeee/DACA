@@ -5,10 +5,10 @@ const server = http.createServer();
 const io = socketIO(server);
 const PORT_CHAT = process.env.PORT_CHAT || 4000;
 
-io.on("connection", (socket: any) => {
-  console.log("User connected");
+io.on("connection", (socket) => {
+  console.log(`User connected:  ${socket.id}`);
 
-  socket.on("send_message", (data: any) => {
+  socket.on("send_message", (data) => {
     console.log(data);
     io.emit("receive_message", data);
   });

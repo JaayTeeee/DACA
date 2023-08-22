@@ -87,8 +87,9 @@ body {
 
 .body_font {
   font-family: "Noto Sans";
-  font-weight: normal;
+  font-weight: bold;
   color: black;
+  text-align: "center";
 }
 
 .box {
@@ -111,7 +112,7 @@ body {
   background: #d9d9d9;
 }
 
-.wordHolder{
+.wordHolder {
   width: 500px;
   height: 55px;
   border-radius: 15px;
@@ -151,6 +152,37 @@ body {
   font-weight: normal;
   color: #df0e0e;
   animation: fadeOut 5s;
+}
+
+.dialog {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.dialog-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 500px;
+  text-align: center;
+}
+
+.dialog-buttons {
+  justify-content: space-between;
+  margin-top: 50px;
+}
+
+.dialog-buttons button {
+  margin: 0;
 }
 
 @layer utilities {

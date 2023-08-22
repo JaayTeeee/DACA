@@ -45,6 +45,7 @@ export const WalletButton = () => {
 
         const checkResponse = await fetch(checkRequest);
         const checkData = await checkResponse.json();
+        console.log(checkData);
 
         if (checkData.success === true) {
           const encodedAddress = encodeURIComponent(address);

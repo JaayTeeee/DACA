@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "chat": "cd ./app/chat/server && node server.js",
+    "server": "cd ./app/database && node database.js"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.8.0",
@@ -32,6 +34,7 @@
     "react-scroll-to-bottom": "^4.2.0",
     "react-toastify": "^9.1.3",
     "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2",
     "sql.js": "^1.8.0",
     "sqlite3": "^5.1.6",
     "swr": "^2.2.1",

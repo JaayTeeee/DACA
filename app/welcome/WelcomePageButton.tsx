@@ -18,7 +18,7 @@ export const TopThreeButtons = () => {
 
   useEffect(() => {
     const urlSearchParams = new URLSearchParams(window.location.search);
-    const addressFromQuery = urlSearchParams.get('address');
+    const addressFromQuery = urlSearchParams.get("address");
     setAddress(addressFromQuery);
   }, []);
 
@@ -41,7 +41,7 @@ export const TopThreeButtons = () => {
   };
 
   const handleHelpClick = () => {
-    router.push("/help");
+    window.location.href = "mailto:support@daca.com";
   };
 
   const handleProfileClick = () => {
@@ -75,9 +75,19 @@ export const TopThreeButtons = () => {
 
 export const RedirectToChatButton = () => {
   const router = useRouter();
+  const [address, setAddress] = useState<string | null>(null);
+
+  useEffect(() => {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const addressFromQuery = urlSearchParams.get("address");
+    setAddress(addressFromQuery);
+  }, [address]);
 
   const handleClick = () => {
-    router.push("/chat");
+    if (address !== null) {
+      const encodedAddress = encodeURIComponent(address);
+      router.push(`/chat?address=${encodedAddress}`);
+    }
   };
 
   return (
