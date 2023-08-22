@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "chat": "cd ./app/chat/server && node server.js",
-    "database": "cd ./app/database && node database.js"
+    "server": "cd ./app/database && node database.js"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.8.0",
