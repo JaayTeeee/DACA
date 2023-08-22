@@ -1,12 +1,13 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { Text } from "@/public/styles/chakra";
-import ProfileContainer from "./profile";
 import { RectangleButton } from "@/public/component/RectangleButton";
 import EditIcon from "@/public/component/icons/icons8-edit-50.png";
 import UserIcon from "@/public/component/icons/icons8-user-100.png";
+import { Text } from "@/public/styles/chakra";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { DialogueBox } from "./DialogueBox";
+import ProfileContainer from "./profile";
 
 interface updatedUserData {
   username: string;
@@ -17,6 +18,14 @@ interface updatedUserData {
 
 export default function profilePage() {
   const [address, setAddress] = useState<string | null>(null);
+  const [showPopUp, setShowPopUp] = useState(false);
+  const [popUpId, setPopUpId] = useState("");
+
+  const handleButtonClick = (id: string) => {
+    setPopUpId(id);
+    setShowPopUp(true);
+  };
+
   const [checkData, setCheckData] = useState<{
     success: boolean;
     username?: string;
@@ -111,11 +120,11 @@ export default function profilePage() {
 
   const handleSave = () => {
     const newUserData = {
-      username: updatedData.username || (checkData?.username || ""),
-      gender: updatedData.gender || (checkData?.gender || ""),
-      age: updatedData.age || (checkData?.age || 0),
+      username: updatedData.username || checkData?.username || "",
+      gender: updatedData.gender || checkData?.gender || "",
+      age: updatedData.age || checkData?.age || 0,
       chatPreference:
-        updatedData.chatPreference || (checkData?.chatPreference || ""),
+        updatedData.chatPreference || checkData?.chatPreference || "",
     };
 
     async function updateData() {
@@ -136,10 +145,14 @@ export default function profilePage() {
         const updateResponse = await fetch(updateRequest);
         const updateData = await updateResponse.json();
 
-        if (updateResponse.ok && updateData.success) {
-          console.log(updateData);
-        } else {
-          console.error("Failed to update user data", updateRequest);
+        if (address) {
+          if (updateResponse.ok && updateData.success) {
+            console.log(updateData);
+            const encodedAddress = encodeURIComponent(address);
+            router.push(`/welcome?address=${encodedAddress}`);
+          } else {
+            console.error("Failed to update user data", updateRequest);
+          }
         }
       } catch (error) {
         console.error("An error occurred:", error);
@@ -188,6 +201,20 @@ export default function profilePage() {
 
     if (address) {
       deleteData();
+    }
+  };
+
+  const handleDialogResult = (result: any, id: any) => {
+    setShowPopUp(false);
+    console.log(result);
+    console.log(id);
+    // Perform actions based on the result and id
+    if (id === "back" && result === "Yes") {
+      handleBack();
+    } else if (id === "save" && result === "Yes") {
+      handleSave();
+    } else if (id === "del" && result === "Yes") {
+      handleDelete();
     }
   };
 
@@ -257,7 +284,7 @@ export default function profilePage() {
                         textAlign: "center",
                         marginRight: "200px",
                       }}
-                      placeholder={checkData.username || ''}
+                      placeholder={checkData.username || ""}
                       onChange={setUsername}
                       value={updatedData?.username}
                       required
@@ -293,10 +320,9 @@ export default function profilePage() {
                           textAlign: "center",
                           textIndent: "10px",
                         }}
-                        placeholder={checkData.age.toString() || ''}
-                        min={1}
                         onChange={setAge}
-                        value={updatedData?.age}
+                        defaultValue={checkData.age}
+                        min={1}
                         required
                       />
                     </form>
@@ -398,37 +424,60 @@ export default function profilePage() {
             )}
         </div>
 
-        <div className="flex flex-row mt-[5rem] mb-[1rem] justify-center ">
-          <RectangleButton
-            onClick={handleBack}
-            text="Back"
-            buttonStyle={{
-              marginRight: "5rem",
-              height: "60px",
-              weight: "300px",
-              shadow: "0px 4px 4px rgba(0, 0, 0, 0.5)",
-            }}
-          />
-          <RectangleButton
-            onClick={handleSave}
-            text="Save"
-            buttonStyle={{
-              color: "red",
-              height: "60px",
-              weight: "300px",
-              shadow: "0px 4px 4px rgba(0, 0, 0, 0.55)",
-            }}
-          />
-          <RectangleButton
-            onClick={handleDelete}
-            text="Delete Account"
-            buttonStyle={{
-              marginLeft: "5rem",
-              height: "60px",
-              weight: "300px",
-              shadow: "0px 4px 4px rgba(0, 0, 0, 0.55)",
-            }}
-          />
+        <div className="flex flex-row mt-[5rem] mb-[3rem] justify-center ">
+          <div className="ml-[7rem]">
+            <RectangleButton
+              onClick={() => handleButtonClick("back")}
+              text="Back"
+              buttonStyle={{
+                marginRight: "5rem",
+                height: "60px",
+                width: "300px",
+                shadow: "0px 4px 4px rgba(0, 0, 0, 0.5)",
+              }}
+            />
+            {showPopUp && (
+              <DialogueBox
+                onResult={(result) => handleDialogResult(result, popUpId)}
+              />
+            )}
+          </div>
+
+          <div>
+            <RectangleButton
+              onClick={() => handleButtonClick("save")}
+              text="Save"
+              buttonStyle={{
+                marginRight: "5rem",
+                height: "60px",
+                width: "300px",
+                shadow: "0px 4px 4px rgba(0, 0, 0, 0.5)",
+              }}
+            />
+            {showPopUp && (
+              <DialogueBox
+                onResult={(result) => handleDialogResult(result, popUpId)}
+              />
+            )}
+          </div>
+          <div>
+            <RectangleButton
+              onClick={() => handleButtonClick("del")}
+              text="Delete"
+              buttonStyle={{
+                backgroundColor: "red",
+                marginRight: "5rem",
+                height: "60px",
+                width: "300px",
+                shadow: "0px 4px 4px rgba(0, 0, 0, 0.5)",
+              }}
+            />
+            {showPopUp && (
+              <DialogueBox
+                onResult={(result) => handleDialogResult(result, popUpId)}
+              />
+            )}
+          </div>
         </div>
       </div>
     </ProfileContainer>
