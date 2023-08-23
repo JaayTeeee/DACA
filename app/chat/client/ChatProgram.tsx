@@ -52,7 +52,7 @@ const ChatProgram = ({
 
   return (
     <ChatInterface>
-      <div>
+      <div className="chat-interface-container">
         <div className="chat-body">
           <ScrollToBottom className="message-container">
             {messageList.map((messageContent) => {

@@ -67,6 +67,21 @@ body {
   animation: fadeInBg 2s;
 }
 
+.chat-container {
+  position: relative;
+}
+
+.chat-footer {
+  position: fixed;
+  bottom: 0;
+  padding-bottom: 70px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .rectangle2 {
   width: 2887.828px;
   height: 430.851px;
