@@ -49,7 +49,8 @@ app.post("/api/insert", (req, res) => {
         username TEXT,
         gender TEXT,
         age INTEGER,
-        chatPreference TEXT
+        chatPreference TEXT,
+        status TEXT
       )
     `);
 
@@ -57,9 +58,9 @@ app.post("/api/insert", (req, res) => {
     const capitalizedUsername = username.charAt(0).toUpperCase() + username.slice(1);
 
     const insertStmt = db.prepare(
-      "INSERT INTO userData (address, username, gender, age, chatPreference) VALUES (?, ?, ?, ?, ?)"
+      "INSERT INTO userData (address, username, gender, age, chatPreference, status) VALUES (?, ?, ?, ?, ?, ?)"
     );
-    insertStmt.run(idValue, capitalizedUsername, gender, age, "english");
+    insertStmt.run(idValue, capitalizedUsername, gender, age, "english", "online");
 
     console.log("Data inserted successfully:", {
       address: idValue,
@@ -122,6 +123,40 @@ app.post("/api/checkUsername", (req, res) => {
     console.error("Error checking data:", error);
     res.status(500).json({ error: "Internal server error" });
   }
+
+  try{
+  const updateStmt = db.prepare(
+    "UPDATE userData SET status = 'online' WHERE address = ?"
+  );
+  updateStmt.run(address);
+
+  console.log("Update successful");
+  res.status(200).json({ success: true });
+} catch (error) {
+  console.error("Error updating data:", error);
+  res.status(500).json({ error: "Internal server error" });
+}
+
+});
+
+//log out 
+app.post("/api/logout", (req, res) => {
+  global.id = req.body;
+  const address = id["id"];
+
+  try{
+  const updateStmt = db.prepare(
+    "UPDATE userData SET status = 'offline' WHERE address = ?"
+  );
+  updateStmt.run(address);
+
+  console.log("Update successful");
+  res.status(200).json({ success: true });
+} catch (error) {
+  console.error("Error updating data:", error);
+  res.status(500).json({ error: "Internal server error" });
+}
+
 });
 
 //profile page
@@ -207,7 +242,7 @@ app.post("/api/updateData", (req, res) => {
     const capitalizedUsername = username.charAt(0).toUpperCase() + username.slice(1);
 
     const updateStmt = db.prepare(
-      "UPDATE userData SET username = ?, gender = ?, age = ?, chatPreference = ? WHERE address = ?"
+      "UPDATE userData SET username = ?, gender = ?, age = ?, chatPreference = ?, status = 'online' WHERE address = ?"
     );
     updateStmt.run(capitalizedUsername, gender, age, chatPreference, address);
 
@@ -250,7 +285,7 @@ app.post("/api/findUser", (req, res) => {
 
   try {
     const checkStmt = db.prepare(
-      "SELECT username FROM userData WHERE chatPreference = ? AND address != ? ORDER BY RANDOM() LIMIT 1;"
+      "SELECT username FROM userData WHERE chatPreference = ? AND address != ? AND status == 'online' ORDER BY RANDOM() LIMIT 1;"
     );
     const result = checkStmt.get(chatPreference, address);
 
