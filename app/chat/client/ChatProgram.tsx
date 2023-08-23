@@ -1,5 +1,7 @@
 "use client";
-import { Text } from "@chakra-ui/react";
+import UserIcon from "@/public/component/icons/icons8-user-100.png";
+import { Text } from "@/public/styles/chakra";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import ScrollToBottom from "react-scroll-to-bottom";
 import socketIOClient from "socket.io-client";
@@ -55,20 +57,63 @@ const ChatProgram = ({
           <ScrollToBottom className="message-container">
             {messageList.map((messageContent) => {
               return (
-                <div
-                  className="message"
-                  id={username === messageContent.author ? "you" : "other"}
-                >
-                  <div>
-                    <div className="message-content">
-                      <p>{messageContent.message}</p>
+                <>
+                  {username === messageContent.author ? (
+                    <div className="flex flex-row mr-[5rem] mt-[1rem] mb-[1rem]">
+                      <div className="bubbleChat">
+                        <Text
+                          style={{
+                            color: "white",
+                            display: "flex",
+                            alignItems: "right",
+                            justifyContent: "left",
+                          }}
+                        >
+                          {messageContent.message}
+                        </Text>
+                      </div>
+                      <Image
+                        src={UserIcon}
+                        alt="user-icon"
+                        style={{
+                          width: "45px",
+                          height: "45px",
+                          borderRadius: "100px",
+                          backgroundColor: "black",
+                          alignContent: "center",
+                          marginLeft: "20px",
+                        }}
+                      />
                     </div>
-                    <div className="message-meta">
-                      <p id="time">{messageContent.time}</p>
-                      <p id="author">{messageContent.author}</p>
+                  ) : (
+                    <div className="flex flex-row ml-[1rem] mt-[1rem]">
+                      <div className="bubbleChat">
+                        <Image
+                          src={UserIcon}
+                          alt="user-icon"
+                          style={{
+                            width: "45px",
+                            height: "45px",
+                            borderRadius: "100px",
+                            backgroundColor: "black",
+                            alignContent: "center",
+                            marginLeft: "20px",
+                          }}
+                        />
+                        <Text
+                          style={{
+                            color: "white",
+                            display: "flex",
+                            alignItems: "right",
+                            justifyContent: "center",
+                          }}
+                        >
+                          {messageContent.message}
+                        </Text>
+                      </div>
                     </div>
-                  </div>
-                </div>
+                  )}
+                </>
               );
             })}
           </ScrollToBottom>
@@ -77,7 +122,7 @@ const ChatProgram = ({
           <input
             type="text"
             style={{
-              width: "60%",
+              width: "80%",
               height: "44px",
               backgroundColor: "#FFFFFF",
               textIndent: "10px",
@@ -102,7 +147,7 @@ const ChatProgram = ({
               height: "44px",
               borderRadius: "8px",
               marginTop: "11px",
-              backgroundColor: "#2B4BC2",
+              backgroundColor: "#001d85",
               cursor: "pointer",
               marginLeft: "30px",
               boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
