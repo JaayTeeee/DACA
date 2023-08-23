@@ -34,9 +34,28 @@ export const TopThreeButtons = () => {
     try {
       await ssxProvider?.signOut();
       setSSX(null);
-      router.push("/home");
+      try {
+        const request = new Request('http://localhost:3001/api/logout', {
+          method: 'POST',
+          headers: new Headers({
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          }),
+          mode: 'cors', // Set CORS mode to 'cors'
+          body: JSON.stringify({ id: address }),
+        });
+    
+        const res = await fetch(request);
+        if (!res.ok) {
+          throw new Error(`Failed to fetch: ${res.statusText}`);
+        }
+        const response = await res.json();
+        router.push("/home");
+      } catch (error) {
+        console.log("Error in inner try-catch: ", error);
+      }
     } catch (error) {
-      console.log("Error: ", error);
+      console.log("Error in outer try-catch: ", error);
     }
   };
 
