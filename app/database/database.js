@@ -53,14 +53,17 @@ app.post("/api/insert", (req, res) => {
       )
     `);
 
+    // Capitalize the first letter of the username
+    const capitalizedUsername = username.charAt(0).toUpperCase() + username.slice(1);
+
     const insertStmt = db.prepare(
       "INSERT INTO userData (address, username, gender, age, chatPreference) VALUES (?, ?, ?, ?, ?)"
     );
-    insertStmt.run(idValue, username, gender, age, "english");
+    insertStmt.run(idValue, capitalizedUsername, gender, age, "english");
 
     console.log("Data inserted successfully:", {
       address: idValue,
-      username: username,
+      username: capitalizedUsername, // Use the capitalized username here
       gender: gender,
       age: age,
     });
@@ -71,6 +74,7 @@ app.post("/api/insert", (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 //home page
 app.post("/api/check", (req, res) => {
@@ -130,18 +134,20 @@ app.post("/api/viewData", (req, res) => {
     const result = checkStmt.get(address);
 
     if (result) {
-      console.log("Data founded:", result);
+      console.log("Data found:", result);
+      const capitalizedUsername = result.username.charAt(0).toUpperCase() + result.username.slice(1);
+
       res
         .status(200)
         .json({
           success: true,
-          username: result.username,
+          username: capitalizedUsername,
           age: result.age,
           gender: result.gender,
           chatPreference: result.chatPreference,
         });
     } else {
-      console.log("Data cannot found:", result);
+      console.log("Data not found:", result);
       res.status(404).json({ success: false, message: "Data not found" });
     }
   } catch (error) {
@@ -149,6 +155,7 @@ app.post("/api/viewData", (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 //welcome page
 app.post("/api/checkUsername", (req, res) => {
@@ -196,18 +203,22 @@ app.post("/api/updateData", (req, res) => {
   const address = global.id["id"];
 
   try {
+    // Capitalize the first letter of the username
+    const capitalizedUsername = username.charAt(0).toUpperCase() + username.slice(1);
+
     const updateStmt = db.prepare(
       "UPDATE userData SET username = ?, gender = ?, age = ?, chatPreference = ? WHERE address = ?"
     );
-    updateStmt.run(username, gender, age, chatPreference, address);
+    updateStmt.run(capitalizedUsername, gender, age, chatPreference, address);
 
-    console.log("update successfully");
+    console.log("Update successful");
     res.status(200).json({ success: true });
   } catch (error) {
     console.error("Error updating data:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 //chat page - match chat language
 app.post("/api/chatLanguage", (req, res) => {
@@ -222,7 +233,7 @@ app.post("/api/chatLanguage", (req, res) => {
 
     if (result) {
       console.log("Find chatPreference successfully:", result);
-      res.status(200).json({ success: true, username: result.username });
+      res.status(200).json({ success: true, chatPreference: result.chatPreference });
     } else {
       console.log("Failed to find chatPreference:", result);
       res.status(404).json({ success: false, message: "User not found" });
@@ -239,7 +250,7 @@ app.post("/api/findUser", (req, res) => {
 
   try {
     const checkStmt = db.prepare(
-      "SELECT username FROM userData WHERE chatPreference = ? AND address = ? ORDER BY RAND() LIMIT 1;"
+      "SELECT username FROM userData WHERE chatPreference = ? AND address != ? ORDER BY RANDOM() LIMIT 1;"
     );
     const result = checkStmt.get(chatPreference, address);
 
@@ -251,10 +262,11 @@ app.post("/api/findUser", (req, res) => {
       res.status(404).json({ success: false, message: "User not found" });
     }
   } catch (error) {
-    console.error("Error checking data:", error);
+    console.error("Error finding user:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 // Start the server
 app.listen(PORT, () => {

@@ -42,8 +42,8 @@ const Chat = () => {
               }),
               mode: "cors",
               body: JSON.stringify({
-                id: addressFromQuery,
-                chatPreference: checkData,
+                chatPreference: checkData.chatPreference,
+                address: addressFromQuery,
               }),
             }
           );
