@@ -24,6 +24,9 @@ const ChatProgram = ({
 }) => {
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState<Message[]>([]);
+  const [connectionStatus, setConnectionStatus] = useState<
+    'connecting' | 'connected' | 'failed'
+  >('connecting'); // Initialize with 'connecting'
   const socket = socketIOClient("http://localhost:4000");
 
   const sendMessage = async () => {
@@ -38,21 +41,56 @@ const ChatProgram = ({
           new Date(Date.now()).getMinutes(),
       };
 
-      await socket.emit("send_message", messageData);
+      // Emit the message to the server
+      socket.emit("send_message", messageData);
+
+      // Add the message to your own messageList immediately
       setMessageList((list) => [...list, messageData]);
+
       setCurrentMessage("");
     }
   };
 
   useEffect(() => {
-    socket.on("receive_message", (data: any) => {
+    // Listen for incoming messages from the server
+    socket.on("receive_message", (data: Message) => {
       setMessageList((list) => [...list, data]);
     });
+  
+    // Listen for the 'connect' event to indicate a successful connection
+    socket.on("connect", () => {
+      setConnectionStatus('connected');
+    });
+  
+    // Listen for the 'connect_error' event to indicate a failed connection
+    socket.on("connect_error", () => {
+      setConnectionStatus('failed');
+    });
+  
+    // Listen for a disconnect message from the server
+    socket.on("receive_message", (data: Message) => {
+      if (data.author === 'System' && data.message === 'User has left the chat') {
+        // Display a disconnect message to the sender
+        setMessageList((list) => [...list, data]);
+      }
+    });
+  
+    return () => {
+      // Clean up when the component unmounts
+      socket.disconnect();
+    };
   }, [socket]);
-
   return (
     <ChatInterface>
-      <div className="chat-interface-container">
+      <div className="chat-interface-container" style={{ textAlign: "center" }}>
+        {/* Display connection status */}
+        {connectionStatus === 'connected' ? (
+          <div className="success-message">Connected with user successfully...Enjoy the chat!</div>
+        ) : connectionStatus === 'failed' ? (
+          <div className="error-message">Failed to connect to the server</div>
+        ) : (
+          <div className="connecting-message">Connecting with user...</div>
+        )}
         <div className="chat-body">
           <ScrollToBottom className="message-container">
             {messageList.map((messageContent) => {
