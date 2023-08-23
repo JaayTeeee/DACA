@@ -242,7 +242,7 @@ app.post("/api/updateData", (req, res) => {
     const capitalizedUsername = username.charAt(0).toUpperCase() + username.slice(1);
 
     const updateStmt = db.prepare(
-      "UPDATE userData SET username = ?, gender = ?, age = ?, chatPreference = ?, status = 'online' WHERE address = ?"
+      "UPDATE userData SET username = ?, gender = ?, age = ?, chatPreference = ? WHERE address = ?"
     );
     updateStmt.run(capitalizedUsername, gender, age, chatPreference, address);
 
