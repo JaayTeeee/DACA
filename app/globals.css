@@ -129,7 +129,8 @@ body {
 
 .chat-body {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: hidden;
+  max-height: 430px;
 }
 
 .bubbleChat {
