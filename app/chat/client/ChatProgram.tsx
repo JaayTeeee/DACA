@@ -4,7 +4,6 @@ import { Text } from "@/public/styles/chakra";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import ScrollToBottom from "react-scroll-to-bottom";
-import socketIOClient from "socket.io-client";
 import "../../globals.css";
 import ChatInterface from "./ChatInterface";
 
@@ -25,26 +24,22 @@ const ChatProgram = ({
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState<Message[]>([]);
   const [connectionStatus, setConnectionStatus] = useState<
-    'connecting' | 'connected' | 'failed'
-  >('connecting'); // Initialize with 'connecting'
-  const socket = socketIOClient("http://localhost:4000");
+    "connecting" | "connected" | "failed" | "closed"
+  >("connecting"); // Initialize with 'connecting'
 
-  const sendMessage = async () => {
+  const socket = new WebSocket("ws://localhost:4000");
+
+  const sendMessage = () => {
     if (currentMessage !== "") {
       const messageData = {
         room: room,
         author: username,
         message: currentMessage,
-        time:
-          new Date(Date.now()).getHours() +
-          ":" +
-          new Date(Date.now()).getMinutes(),
+        time: `${new Date().getHours()}:${new Date().getMinutes()}`,
       };
 
-      // Emit the message to the server
-      socket.emit("send_message", messageData);
+      socket.send(JSON.stringify(messageData));
 
-      // Add the message to your own messageList immediately
       setMessageList((list) => [...list, messageData]);
 
       setCurrentMessage("");
@@ -52,45 +47,48 @@ const ChatProgram = ({
   };
 
   useEffect(() => {
-    // Listen for incoming messages from the server
-    socket.on("receive_message", (data: Message) => {
-      setMessageList((list) => [...list, data]);
-    });
-  
-    // Listen for the 'connect' event to indicate a successful connection
-    socket.on("connect", () => {
-      setConnectionStatus('connected');
-    });
-  
-    // Listen for the 'connect_error' event to indicate a failed connection
-    socket.on("connect_error", () => {
-      setConnectionStatus('failed');
-    });
-  
-    // Listen for a disconnect message from the server
-    socket.on("receive_message", (data: Message) => {
-      if (data.author === 'System' && data.message === 'User has left the chat') {
-        // Display a disconnect message to the sender
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.author !== username) {
         setMessageList((list) => [...list, data]);
       }
-    });
-  
-    return () => {
-      // Clean up when the component unmounts
-      socket.disconnect();
     };
-  }, [socket]);
+
+    socket.onopen = () => {
+      setConnectionStatus("connected");
+    };
+
+    socket.onerror = () => {
+      setConnectionStatus("failed");
+    };
+
+    socket.onclose = () => {
+      setConnectionStatus("closed");
+    };
+
+    return () => {
+      socket.close();
+    };
+  }, []);
+
+  console.log(connectionStatus);
+
   return (
     <ChatInterface>
       <div className="chat-interface-container" style={{ textAlign: "center" }}>
         {/* Display connection status */}
-        {connectionStatus === 'connected' ? (
-          <div className="success-message">Connected with user successfully...Enjoy the chat!</div>
-        ) : connectionStatus === 'failed' ? (
+        {connectionStatus === "connected" ? (
+          <div className="success-message">
+            Connected with user successfully...Enjoy the chat!
+          </div>
+        ) : connectionStatus === "failed" ? (
           <div className="error-message">Failed to connect to the server</div>
+        ) : connectionStatus === "closed" ? (
+          <div className="close-message">User has left the chat</div>
         ) : (
           <div className="connecting-message">Connecting with user...</div>
         )}
+
         <div className="chat-body">
           <ScrollToBottom className="message-container">
             {messageList.map((messageContent) => {
@@ -124,26 +122,34 @@ const ChatProgram = ({
                       />
                     </div>
                   ) : (
-                    <div className="flex flex-row ml-[1rem] mt-[1rem]">
-                      <div className="bubbleChat">
-                        <Image
-                          src={UserIcon}
-                          alt="user-icon"
-                          style={{
-                            width: "45px",
-                            height: "45px",
-                            borderRadius: "100px",
-                            backgroundColor: "black",
-                            alignContent: "center",
-                            marginLeft: "20px",
-                          }}
-                        />
+                    <div className="flex flex-row ml-[3rem] mt-[1rem]">
+                      <Image
+                        src={UserIcon}
+                        alt="user-icon"
+                        style={{
+                          width: "45px",
+                          height: "45px",
+                          borderRadius: "100px",
+                          backgroundColor: "grey",
+                          alignContent: "center",
+                          marginLeft: "20px",
+                        }}
+                      />
+                      <div
+                        className="bubbleChat"
+                        style={{
+                          backgroundColor: "grey",
+                          marginLeft: "1rem", // Add margin to create space between the image and the bubble chat
+                          display: "flex", // Set flex display to enable flex properties
+                          alignItems: "center", // Center the content vertically
+                          padding: "0.5rem", // Add padding to the bubble chat container
+                        }}
+                      >
                         <Text
                           style={{
                             color: "white",
                             display: "flex",
-                            alignItems: "right",
-                            justifyContent: "center",
+                            alignItems: "center", // Center the text vertically within the bubble chat
                           }}
                         >
                           {messageContent.message}
@@ -160,7 +166,7 @@ const ChatProgram = ({
           <input
             type="text"
             style={{
-              width: "80%",
+              width: "70%",
               height: "44px",
               backgroundColor: "#FFFFFF",
               textIndent: "10px",

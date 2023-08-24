@@ -1,31 +1,27 @@
+const express = require("express");
 const http = require("http");
-const socketIO = require("socket.io");
+const WebSocket = require("ws");
 
-const server = http.createServer();
-const io = socketIO(server);
-const PORT_CHAT = process.env.PORT_CHAT || 4000;
+const port = 4000;
+const app = express();
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
 
-io.on('connection', (socket) => {
-  console.log('A user connected.');
+wss.on("connection", function connection(ws) {
+  const address = ws._socket.remoteAddress;
+  console.log("Connection received: ", address);
 
-  socket.on('send_message', (data) => {
-    // Broadcast the received message to all connected clients
-    io.emit('receive_message', data);
-  });
-
-  socket.on('disconnect', () => {
-    console.log('A user disconnected.');
-
-    // Send a disconnect message to all connected clients
-    io.emit('receive_message', {
-      room: data.room, // Assuming you have room information
-      author: 'System', // You can use a 'System' user to indicate system messages
-      message: 'The user has left the chat',
-      time: new Date().toLocaleTimeString(),
-    });
-  });
+  ws.on("message", wss.broadcast);
 });
 
-server.listen(PORT_CHAT, () => {
-  console.log(`Multi-client chat server is running on port ${PORT_CHAT}`);
+wss.broadcast = function broadcastMsg(sender, msg) {
+  wss.clients.forEach(function each(client) {
+    if (client !== sender) {
+      client.send(msg);
+    }
+  });
+};
+
+server.listen(port, function () {
+  console.log(`Server is listening on ${port}!`);
 });
