@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import ChatProgram from "./client/ChatProgram";
 
 const Chat = () => {
-  const room = 1;
   const [address, setAddress] = useState<string | null>(null);
   const [username, setUsername] = useState<string>("");
 
@@ -75,7 +74,7 @@ const Chat = () => {
 
   return (
     <>
-      <ChatProgram username={username} room={room} />
+      <ChatProgram username={username} />
     </>
   );
 };

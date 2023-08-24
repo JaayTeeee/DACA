@@ -123,13 +123,14 @@ body {
 .greyContainer {
   width: 480px;
   height: 120px;
-  border-radius: 15px;
+  border-radius: 10px;
   background: #d9d9d9;
 }
 
 .chat-body {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: hidden;
+  max-height: 430px;
 }
 
 .bubbleChat {

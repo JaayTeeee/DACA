@@ -1,19 +1,93 @@
+const express = require("express");
 const http = require("http");
-const socketIO = require("socket.io");
+const WebSocket = require("ws");
 
-const server = http.createServer();
-const io = socketIO(server);
-const PORT_CHAT = process.env.PORT_CHAT || 4000;
+const port = 4000;
+const app = express();
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
 
-io.on("connection", (socket) => {
-  console.log(`User connected:  ${socket.id}`);
+// Store the connected users
+const connectedUsers = new Set();
 
-  socket.on("send_message", (data) => {
-    console.log(data);
-    io.emit("receive_message", data);
+wss.on("connection", function connection(ws) {
+  const address = ws._socket.remoteAddress;
+  console.log("Connection received: ", address);
+
+  ws.on("message", function incoming(message) {
+    const data = JSON.parse(message);
+    if (data.type === "connect") {
+      // Store the username of the connected user
+      connectedUsers.add(data.username);
+
+      // Notify the other user about the connection
+      const otherUser = getOtherUser(data.username);
+      if (otherUser) {
+        sendConnectionStatus(otherUser, "connected");
+      }
+    } else {
+      // Broadcast the message to all connected clients
+      wss.clients.forEach(function each(client) {
+        if (client !== ws && client.readyState === WebSocket.OPEN) {
+          client.send(message);
+        }
+      });
+    }
+  });
+
+  ws.on("close", function close() {
+    const username = getUsernameBySocket(ws);
+    if (username) {
+      // Remove the disconnected user from the set
+      connectedUsers.delete(username);
+
+      // Notify the other user about the disconnection
+      const otherUser = getOtherUser(username);
+      if (otherUser) {
+        sendConnectionStatus(otherUser, "closed");
+      }
+    }
   });
 });
 
-server.listen(PORT_CHAT, () => {
-  console.log(`Multi-client chat server is running on port ${PORT_CHAT}`);
+function getUsernameBySocket(socket) {
+  // Find the username based on the socket object
+  for (const client of wss.clients) {
+    if (client === socket) {
+      return client.username;
+    }
+  }
+  return null;
+}
+
+function getOtherUser(username) {
+  // Find the other user's username
+  for (const user of connectedUsers) {
+    if (user !== username) {
+      return user;
+    }
+  }
+  return null;
+}
+
+function sendConnectionStatus(username, status) {
+  // Send connection status message to the specified user
+  const client = getClientByUsername(username);
+  if (client) {
+    client.send(JSON.stringify({ type: "connectionStatus", username, status }));
+  }
+}
+
+function getClientByUsername(username) {
+  // Find the client WebSocket object based on the username
+  for (const client of wss.clients) {
+    if (client.username === username) {
+      return client;
+    }
+  }
+  return null;
+}
+
+server.listen(port, function () {
+  console.log(`Server is listening on ${port}!`);
 });
