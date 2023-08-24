@@ -35,17 +35,20 @@ wss.on("connection", function connection(ws) {
     }
   });
 
+  //这个从close func拿出来分开，没有跑
+wss.on("disconnected", function disconnect() {
+  // Notify the other user about the disconnection
+  const otherUser = getOtherUser(username);
+  if (otherUser) {
+    sendConnectionStatus(otherUser, "closed");
+  }
+})
+
   ws.on("close", function close() {
     const username = getUsernameBySocket(ws);
     if (username) {
       // Remove the disconnected user from the set
       connectedUsers.delete(username);
-
-      // Notify the other user about the disconnection
-      const otherUser = getOtherUser(username);
-      if (otherUser) {
-        sendConnectionStatus(otherUser, "closed");
-      }
     }
   });
 });

@@ -1,10 +1,13 @@
 import BlackBgUserIcon from "@/public/component/icons/icons8-user-100_1.png";
 import WhiteBgUserIcon from "@/public/component/icons/icons8-user-100_2.png";
+import LogoutIcon from "@/public/component/icons/icons8-log-out-50.png";
+import { useRouter } from "next/navigation";
 import { Text } from "@/public/styles/chakra";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import "../../globals.css";
 import ChatInterface from "./ChatInterface";
+import { CircleButton } from "@/public/component/CircleButton";
 
 interface Message {
   author: string;
@@ -13,10 +16,13 @@ interface Message {
 }
 
 const ChatProgram = ({ username }: { username: string }) => {
+  const router = useRouter();
+  const [redirectTo, setRedirectTo] = useState("");
+  const [address, setAddress] = useState<string | null>(null);
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState<Message[]>([]);
   const [connectionStatus, setConnectionStatus] = useState<
-    "connecting" | "connected" | "failed" | "closed"
+    "connecting" | "connected" | "failed" | "closed" | "disconnected"
   >("connecting"); // Initialize with 'connecting'
 
   const socket = useRef<WebSocket | null>(null);
@@ -36,6 +42,12 @@ const ChatProgram = ({ username }: { username: string }) => {
       }
     }
   };
+
+  useEffect(() => {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const addressFromQuery = urlSearchParams.get("address");
+    setAddress(addressFromQuery);
+  }, [address]);
 
   useEffect(() => {
     socket.current = new WebSocket("ws://localhost:4000");
@@ -58,7 +70,20 @@ const ChatProgram = ({ username }: { username: string }) => {
           }
 
           if (data.author !== username) {
-            setMessageList((list) => [...list, data]);
+            if (data.type === "connectionStatus") {
+              // Handle connection status message
+              if (data.status === "closed") {
+                const leaveMessage = {
+                  author: "System",
+                  message: `${data.username} has left the chat`,
+                  time: `${new Date().getHours()}:${new Date().getMinutes()}`,
+                  type: "system",
+                };
+                setMessageList((list) => [...list, leaveMessage]);
+              }
+            } else {
+              setMessageList((list) => [...list, data]);
+            }
           }
         };
 
@@ -85,16 +110,34 @@ const ChatProgram = ({ username }: { username: string }) => {
       setConnectionStatus("failed");
     };
 
-    socket.current.onclose = () => {
-      setConnectionStatus("closed");
-    };
-
     return () => {
       if (socket.current) {
         socket.current.close();
       }
     };
   }, [username]);
+
+  const handleClick = () => {
+    if (address !== null) {
+      const encodedAddress = encodeURIComponent(address);
+      setRedirectTo(`/welcome?address=${encodedAddress}`);
+      
+      if (socket.current) {
+        socket.current.onclose = () => {
+          setConnectionStatus("closed");
+        };
+        socket.current.send(JSON.stringify({ message: "System: The user has left the chat" })); //跑这个
+        setConnectionStatus("disconnected"); // Set the status to disconnected 这个没有跑
+        socket.current.close();
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (redirectTo) {
+      router.push(redirectTo);
+    }
+  }, [redirectTo, router]);
 
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -119,8 +162,12 @@ const ChatProgram = ({ username }: { username: string }) => {
               <div className="error-message">
                 Failed to connect to the server
               </div>
+            )  : connectionStatus === "disconnected" ? (
+                <div className="leave-message">
+                  The user has left the chat
+                </div>
             ) : connectionStatus === "closed" ? (
-              <div className="close-message">User has left the chat</div>
+              <div className="close-message">You has left the chat</div>
             ) : (
               <div className="connecting-message">Connecting with user...</div>
             )}
@@ -237,6 +284,13 @@ const ChatProgram = ({ username }: { username: string }) => {
               SEND
             </Text>
           </button>
+          <CircleButton
+              buttonStyle={{ backgroundColor: "rgba(66, 107, 253, 0.4)" }}
+              imgStyle={{ marginLeft: "5px", height: "60%", width: "50%" }}
+              imgSrc={LogoutIcon}
+              desc="logout-icon"
+              onClick={handleClick}
+            />
         </div>
       </div>
     </ChatInterface>
