@@ -1,4 +1,5 @@
-import UserIcon from "@/public/component/icons/icons8-user-100.png";
+import BlackBgUserIcon from "@/public/component/icons/icons8-user-100_1.png";
+import WhiteBgUserIcon from "@/public/component/icons/icons8-user-100_2.png";
 import { Text } from "@/public/styles/chakra";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
@@ -108,7 +109,7 @@ const ChatProgram = ({ username }: { username: string }) => {
   return (
     <ChatInterface>
       <div className="chat-interface-container" style={{ textAlign: "center" }}>
-        <div className="chat-body">
+        <div className="chat-body mt-[2rem]">
           <div className="mt-[2rem]" style={{ color: "grey", opacity: 0.7 }}>
             {connectionStatus === "connected" ? (
               <div className="success-message">
@@ -142,24 +143,23 @@ const ChatProgram = ({ username }: { username: string }) => {
                       </Text>
                     </div>
                     <Image
-                      src={UserIcon}
+                      src={BlackBgUserIcon}
                       alt="user-icon"
                       style={{
                         width: "45px",
                         height: "45px",
                         borderRadius: "100px",
                         backgroundColor: "black",
+                        color: "white",
                         alignContent: "center",
                         marginLeft: "20px",
                       }}
-                      width={45}
-                      height={45}
                     />
                   </div>
                 ) : (
                   <div className="flex flex-row ml-[3rem] mt-[1rem]">
                     <Image
-                      src={UserIcon}
+                      src={WhiteBgUserIcon}
                       alt="user-icon"
                       style={{
                         width: "45px",
@@ -169,8 +169,6 @@ const ChatProgram = ({ username }: { username: string }) => {
                         alignContent: "center",
                         marginLeft: "20px",
                       }}
-                      width={45}
-                      height={45}
                     />
                     <div
                       className="bubbleChat"
@@ -179,14 +177,15 @@ const ChatProgram = ({ username }: { username: string }) => {
                         marginLeft: "1rem",
                         display: "flex",
                         alignItems: "center",
-                        padding: "0.5rem",
+                        padding: "10px 15px",
                       }}
                     >
                       <Text
                         style={{
                           color: "white",
                           display: "flex",
-                          alignItems: "center",
+                          alignItems: "right",
+                          justifyContent: "left",
                         }}
                       >
                         {messageContent.message}
