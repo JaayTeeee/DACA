@@ -1,13 +1,11 @@
 import BlackBgUserIcon from "@/public/component/icons/icons8-user-100_1.png";
 import WhiteBgUserIcon from "@/public/component/icons/icons8-user-100_2.png";
-import LogoutIcon from "@/public/component/icons/icons8-log-out-50.png";
-import { useRouter } from "next/navigation";
 import { Text } from "@/public/styles/chakra";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import "../../globals.css";
 import ChatInterface from "./ChatInterface";
-import { CircleButton } from "@/public/component/CircleButton";
 
 interface Message {
   author: string;
@@ -73,7 +71,7 @@ const ChatProgram = ({ username }: { username: string }) => {
 
           if (data.author !== username) {
             setMessageList((list) => [...list, data]);
-          }          
+          }
         };
 
         reader.readAsText(responseData);
@@ -106,30 +104,6 @@ const ChatProgram = ({ username }: { username: string }) => {
     };
   }, [username]);
 
-  const handleClick = () => {
-    if (address !== null) {
-      const encodedAddress = encodeURIComponent(address);
-      setRedirectTo(`/welcome?address=${encodedAddress}`);
-      
-      if (socket.current) {
-        socket.current.onclose = () => {
-          setConnectionStatus("closed");
-          setIsChatDisabled(true); // Disable the chat box
-        };
-        const leaveMessage: Message = {
-          author: "System",
-          message: "The user has left the chat",
-          time: `${new Date().getHours()}:${new Date().getMinutes()}`,
-          type: "system",
-        };
-        socket.current.send(JSON.stringify(leaveMessage)); // Send the system message
-        setMessageList((list) => [...list, leaveMessage] as Message[]);
-        setConnectionStatus("disconnected");
-        socket.current.close();
-      }
-    }
-  };
-
   useEffect(() => {
     if (redirectTo) {
       router.push(redirectTo);
@@ -153,16 +127,14 @@ const ChatProgram = ({ username }: { username: string }) => {
           <div className="mt-[2rem]" style={{ color: "grey", opacity: 0.7 }}>
             {connectionStatus === "connected" ? (
               <div className="success-message">
-                Connected with user successfully... Enjoy the chat!
+                Connected successfully... Enjoy the chat!
               </div>
             ) : connectionStatus === "failed" ? (
               <div className="error-message">
                 Failed to connect to the server
               </div>
-            )  : connectionStatus === "disconnected" ? (
-                <div className="leave-message">
-                  The user has left the chat
-                </div>
+            ) : connectionStatus === "disconnected" ? (
+              <div className="leave-message">The user has left the chat</div>
             ) : connectionStatus === "closed" ? (
               <div className="close-message">You has left the chat</div>
             ) : (
@@ -173,9 +145,12 @@ const ChatProgram = ({ username }: { username: string }) => {
             return (
               <React.Fragment key={index}>
                 {messageContent.type === "system" ? (
-                <div className="system-message"  style={{ color: "grey", opacity: 0.7 }}>
-                  {messageContent.message}
-                </div>
+                  <div
+                    className="system-message"
+                    style={{ color: "grey", opacity: 0.7 }}
+                  >
+                    {messageContent.message}
+                  </div>
                 ) : username === messageContent.author ? (
                   <div className="flex flex-row mr-[5rem] mt-[1rem] mb-[1rem]">
                     <div className="bubbleChat">
@@ -247,7 +222,7 @@ const ChatProgram = ({ username }: { username: string }) => {
           <div ref={ref} />
         </div>
         <div className="chat-footer flex flex-row justify-center">
-        <input
+          <input
             type="text"
             style={{
               width: "70%",
@@ -263,6 +238,11 @@ const ChatProgram = ({ username }: { username: string }) => {
             value={currentMessage}
             onChange={(event) => {
               setCurrentMessage(event.target.value);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                sendMessage();
+              }
             }}
             placeholder="Type your message..."
             required
@@ -287,13 +267,6 @@ const ChatProgram = ({ username }: { username: string }) => {
               SEND
             </Text>
           </button>
-          <CircleButton
-              buttonStyle={{ backgroundColor: "rgba(66, 107, 253, 0.4)" }}
-              imgStyle={{ marginLeft: "5px", height: "60%", width: "50%" }}
-              imgSrc={LogoutIcon}
-              desc="logout-icon"
-              onClick={handleClick}
-            />
         </div>
       </div>
     </ChatInterface>

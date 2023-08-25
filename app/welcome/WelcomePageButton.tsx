@@ -35,16 +35,16 @@ export const TopThreeButtons = () => {
       await ssxProvider?.signOut();
       setSSX(null);
       try {
-        const request = new Request('http://localhost:3001/api/logout', {
-          method: 'POST',
+        const request = new Request("http://localhost:3001/api/logout", {
+          method: "POST",
           headers: new Headers({
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
+            "Content-Type": "application/json",
+            Accept: "application/json",
           }),
-          mode: 'cors', // Set CORS mode to 'cors'
+          mode: "cors", // Set CORS mode to 'cors'
           body: JSON.stringify({ id: address }),
         });
-    
+
         const res = await fetch(request);
         if (!res.ok) {
           throw new Error(`Failed to fetch: ${res.statusText}`);

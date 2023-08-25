@@ -23,4 +23,5 @@ export {
   PopoverTrigger,
   SimpleGrid,
   Text,
+  Tooltip,
 } from "@chakra-ui/react";

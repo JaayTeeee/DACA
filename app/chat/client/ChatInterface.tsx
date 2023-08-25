@@ -1,5 +1,6 @@
 import { Text } from "../../../public/styles/chakra";
 import "../../globals.css";
+import RedirectToWelcomeButton from "./redirectToWelcomeButton";
 
 const ChatInterface = ({ children }: { children: any }) => {
   return (
@@ -16,6 +17,9 @@ const ChatInterface = ({ children }: { children: any }) => {
             <Text className="daca-font" fontSize="48px">
               DACA
             </Text>
+            <div className="mt-2" style={{ marginLeft: "600px" }}>
+              <RedirectToWelcomeButton />
+            </div>
           </div>
           <div
             className="flex flex-col box mt-2"
