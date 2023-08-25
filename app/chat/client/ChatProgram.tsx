@@ -13,6 +13,7 @@ interface Message {
   author: string;
   message: string;
   time: string;
+  type?: "system";
 }
 
 const ChatProgram = ({ username }: { username: string }) => {
@@ -20,6 +21,7 @@ const ChatProgram = ({ username }: { username: string }) => {
   const [redirectTo, setRedirectTo] = useState("");
   const [address, setAddress] = useState<string | null>(null);
   const [currentMessage, setCurrentMessage] = useState("");
+  const [isChatDisabled, setIsChatDisabled] = useState(false);
   const [messageList, setMessageList] = useState<Message[]>([]);
   const [connectionStatus, setConnectionStatus] = useState<
     "connecting" | "connected" | "failed" | "closed" | "disconnected"
@@ -70,21 +72,8 @@ const ChatProgram = ({ username }: { username: string }) => {
           }
 
           if (data.author !== username) {
-            if (data.type === "connectionStatus") {
-              // Handle connection status message
-              if (data.status === "closed") {
-                const leaveMessage = {
-                  author: "System",
-                  message: `${data.username} has left the chat`,
-                  time: `${new Date().getHours()}:${new Date().getMinutes()}`,
-                  type: "system",
-                };
-                setMessageList((list) => [...list, leaveMessage]);
-              }
-            } else {
-              setMessageList((list) => [...list, data]);
-            }
-          }
+            setMessageList((list) => [...list, data]);
+          }          
         };
 
         reader.readAsText(responseData);
@@ -125,9 +114,17 @@ const ChatProgram = ({ username }: { username: string }) => {
       if (socket.current) {
         socket.current.onclose = () => {
           setConnectionStatus("closed");
+          setIsChatDisabled(true); // Disable the chat box
         };
-        socket.current.send(JSON.stringify({ message: "System: The user has left the chat" })); //跑这个
-        setConnectionStatus("disconnected"); // Set the status to disconnected 这个没有跑
+        const leaveMessage: Message = {
+          author: "System",
+          message: "The user has left the chat",
+          time: `${new Date().getHours()}:${new Date().getMinutes()}`,
+          type: "system",
+        };
+        socket.current.send(JSON.stringify(leaveMessage)); // Send the system message
+        setMessageList((list) => [...list, leaveMessage] as Message[]);
+        setConnectionStatus("disconnected");
         socket.current.close();
       }
     }
@@ -175,7 +172,11 @@ const ChatProgram = ({ username }: { username: string }) => {
           {messageList.map((messageContent, index) => {
             return (
               <React.Fragment key={index}>
-                {username === messageContent.author ? (
+                {messageContent.type === "system" ? (
+                <div className="system-message"  style={{ color: "grey", opacity: 0.7 }}>
+                  {messageContent.message}
+                </div>
+                ) : username === messageContent.author ? (
                   <div className="flex flex-row mr-[5rem] mt-[1rem] mb-[1rem]">
                     <div className="bubbleChat">
                       <Text
@@ -246,7 +247,7 @@ const ChatProgram = ({ username }: { username: string }) => {
           <div ref={ref} />
         </div>
         <div className="chat-footer flex flex-row justify-center">
-          <input
+        <input
             type="text"
             style={{
               width: "70%",
@@ -265,6 +266,7 @@ const ChatProgram = ({ username }: { username: string }) => {
             }}
             placeholder="Type your message..."
             required
+            disabled={isChatDisabled} // Disable the input when chat is disabled
           />
           <button
             onClick={sendMessage}
@@ -279,6 +281,7 @@ const ChatProgram = ({ username }: { username: string }) => {
               marginLeft: "30px",
               boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
             }}
+            disabled={isChatDisabled} // Disable the button when chat is disabled
           >
             <Text className="daca-font" fontSize="lg" color="white">
               SEND

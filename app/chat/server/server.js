@@ -35,7 +35,6 @@ wss.on("connection", function connection(ws) {
     }
   });
 
-  //这个从close func拿出来分开，没有跑
 wss.on("disconnected", function disconnect() {
   // Notify the other user about the disconnection
   const otherUser = getOtherUser(username);
