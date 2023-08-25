@@ -1,7 +1,7 @@
 
 DACA 
+![image](https://github.com/JaayTeeee/DACA/assets/98388217/40bd6ffa-2143-42e1-996c-83939e5b343f)
 
-Decentralized | Anonymity | Descructive 
 
 
 Steps to use DACA:
