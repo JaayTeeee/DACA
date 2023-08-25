@@ -1,6 +1,5 @@
 
-
-              		DACA 
+DACA 
 
 Decentralized | Anonimity | Descructive 
 
