@@ -1,7 +1,7 @@
 
 DACA 
 
-Decentralized | Anonimity | Descructive 
+Decentralized | Anonymity | Descructive 
 
 
 Steps to use DACA:
