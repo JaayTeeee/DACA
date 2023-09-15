@@ -1,15 +1,6 @@
- 
+UPDATED 15-09-2023: Won SpruceID's Prize Pool - Logging in without a Username in the competition: Future of Blockchain: University Hackathon :D
 
-
-
-
-
-
-
-![image](https://github.com/JaayTeeee/DACA/assets/98388217/40bd6ffa-2143-42e1-996c-83939e5b343f)
-
-
-
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Decentralized Anonymus Conversation Application, or DACA, is an application to encourage people to have conversation, but at the same time securing their identity by not revealing their information, including username, age, gender, etc.
 
